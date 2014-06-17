@@ -1,4 +1,4 @@
-package given_content;
+package given_by_kesden;
 /* This does not offer the code of the whole communication module 
    (CM) for RMI: but it gives some hints about how you can make 
    it. I call it simply "yourRMI". 

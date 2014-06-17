@@ -1,4 +1,4 @@
-package given_content;
+package given_by_kesden;
 public class RemoteObjectRef
 {
     String IP_adr;
