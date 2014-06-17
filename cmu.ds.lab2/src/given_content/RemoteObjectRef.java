@@ -1,3 +1,4 @@
+package given_content;
 public class RemoteObjectRef
 {
     String IP_adr;

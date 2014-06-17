@@ -1,3 +1,4 @@
+package given_content;
 
 
 public interface NameServer // extends YourRemote
