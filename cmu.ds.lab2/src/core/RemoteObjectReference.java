@@ -6,10 +6,10 @@ public class RemoteObjectReference implements java.io.Serializable{
 	 */
 	private static final long serialVersionUID = 4532216813002720501L;
 	
-	String serverIP;
-	int serverPort;
-	String bindname; // this will be matched with "HostMachineIP:Port/bindname"
-	String interfaceImplemented;
+	public String serverIP;
+	public int serverPort;
+	public String bindname; // this will be matched with "HostMachineIP:Port/bindname"
+	public String interfaceImplemented;
 	
 	public RemoteObjectReference(){
 		
@@ -22,4 +22,9 @@ public class RemoteObjectReference implements java.io.Serializable{
 		this.interfaceImplemented = interfaceImpl;
 	}
 	
+	@Override
+	public String toString(){
+		return "Bindname: "+ bindname+" | Interface Implemented: "+ interfaceImplemented + " Server: "+ serverIP + ":"+serverPort;
+		
+	}
 }

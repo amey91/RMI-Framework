@@ -69,7 +69,7 @@ public class CommModule
 		// (1) receives an invocation request.
 		// (2) creates a socket and input/output streams.
 		// (3) gets the invocation, in martiallled form.
-		// (4) gets the real object reference from tbl.
+		// (4) gets the remote object reference from tbl.
 		// (5) Either:
 		//      -- using the interface name, asks the skeleton,
 		//         together with the object reference, to unmartial
