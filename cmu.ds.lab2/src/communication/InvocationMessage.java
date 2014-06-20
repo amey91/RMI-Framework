@@ -1,7 +1,10 @@
 package communication;
 
+import core.RemoteObjectReference;
+
 public class InvocationMessage extends Message{
 
+	
 
 	public InvocationMessage(RemoteObjectReference r) {
 		super(r);
