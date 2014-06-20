@@ -3,15 +3,24 @@ package server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.util.concurrent.ConcurrentHashMap;
 
+import communication.ExceptionMessage;
+import communication.InvocationMessage;
 import communication.Message;
 import communication.MessageType;
+import communication.ReturnMessage;
+import core.Remote440;
 import core.RemoteObjectReference;
+import example1.CalciInterface;
 import registry.RegistryServer;
 
 public class Server {
@@ -61,10 +70,10 @@ public class Server {
 		// TODO @test  remove
 		int i5 = deleteAndRemove("Calci1");
 		
-ServerSocket listeningSocket = null;
+		ServerSocket listeningSocket = null;
 		
 		while(true){
-			// setup the heartbeat socket for the server that listens to clients 
+			// setup the invocation socket for the server that listens to clients 
 			try {
 				listeningSocket = new ServerSocket(Server.INITIAL_SERVER_PORT);
 				log("Server waiting for new message...");
@@ -145,7 +154,72 @@ class ServerProcessor extends java.lang.Thread {
 	
 	@Override
 	public void run(){
-		// TODO handle invocation message
+		ObjectInputStream inobj = null;
+		ObjectOutputStream outObj = null ;
+		InvocationMessage newMsg = null;
+		try {
+			inobj = new ObjectInputStream(clientSocket.getInputStream());
+			outObj = new ObjectOutputStream(clientSocket.getOutputStream());
+		} catch (IOException e) {
+			try {
+				clientSocket.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+		
+		//read object invocation and unmarshall elements
+		try {
+			newMsg = (InvocationMessage) inobj.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		try {
+			Class<?> classRef = null;
+			
+			
+			String className = newMsg.remoteObjectRef.interfaceImplemented+"Interface";
+			// instantiate stub class by name 
+			
+			classRef = Class.forName(className);
+			
+			// TODO get class by HTTP
+				
+			Method myMethod = classRef.getMethod(newMsg.methodName, newMsg.classArray);
+						
+			if(!Server.serverMap.containsKey(newMsg.remoteObjectRef.bindname)){
+				ExceptionMessage em = new ExceptionMessage("Bindname not found at server");
+				outObj.writeObject(em);	
+			}else{
+				Object ok = myMethod.invoke(Server.serverMap.get(newMsg.remoteObjectRef.bindname), newMsg.objectArray);
+				ReturnMessage r = new ReturnMessage(ok);
+				outObj.writeObject(r);
+			}
+						
+		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException 
+				| IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | IOException  e) {
+			//send error message
+			try {
+				ExceptionMessage em = new ExceptionMessage(e.getMessage());
+				outObj.writeObject(em);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}finally{
+			try {
+				inobj.close();
+				outObj.close();
+				clientSocket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+
+		}
 		
 	}
 	

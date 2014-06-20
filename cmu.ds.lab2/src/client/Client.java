@@ -8,7 +8,9 @@ public class Client {
 	static ConcurrentHashMap<String, Object> remoteObjMap 
 				= new ConcurrentHashMap<String, Object>();
 	
+	// TODO
 	
+	// UI for lookup, list and input for searching bindnames
 	
 	
 	

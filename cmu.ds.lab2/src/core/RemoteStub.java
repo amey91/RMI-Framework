@@ -28,9 +28,13 @@ public class RemoteStub {
 		//first send method name, then param objects, then class types
 		outObj.writeObject(invMsg);
 		Object in = (Object)inobj.readObject(); 
-		// TODO if the received object is 
-		// get response
+		
+		// TODO if the received object is remote object, then return a stub object
+		
 		//close socket
+		inobj.close();
+		outObj.close();
+		newSocket.close();
 		return in;
 	}
 }

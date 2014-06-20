@@ -4,9 +4,9 @@ import core.RemoteObjectReference;
 
 public class InvocationMessage extends Message{
 	
-	String methodName;
-	Object[] objectArray;
-	Class[] classArray;
+	public String methodName;
+	public Object[] objectArray;
+	public Class[] classArray;
 	
 
 	public InvocationMessage(RemoteObjectReference r) {
