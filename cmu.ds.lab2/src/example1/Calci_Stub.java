@@ -8,7 +8,7 @@ import core.*;
 
 public class Calci_Stub extends RemoteStub implements CalciInterface,Remote440 {
 	
-	  private static Method $method_add_0;
+	 /* private static Method $method_add_0;
 	  private static Method $method_setMemory_0;
 	  private static Method $method_addMemory_0;
 	static
@@ -24,6 +24,7 @@ public class Calci_Stub extends RemoteStub implements CalciInterface,Remote440 {
 	      throw new NoSuchMethodError("stub class initialization failed");
 	    }
 	  }
+	  */
 	public Calci_Stub(RemoteObjectReference ror) {
 		super(ror);
 	}
@@ -33,9 +34,9 @@ public class Calci_Stub extends RemoteStub implements CalciInterface,Remote440 {
 	@SuppressWarnings("finally")
 	@Override
 	public int add(int a, int b) throws Remote440Exception {
-		int i= (Integer) null;
+		
 		try{
-			i = (int)invoke("add", new Object[]{new Integer(a), new Integer(b)}, new Class[]{Integer.TYPE,Integer.TYPE});
+			int i = (int)invoke("add", new Object[]{new Integer(a), new Integer(b)}, new Class[]{Integer.TYPE,Integer.TYPE});
 			return i;
 		} catch(Exception e){
 			System.out.println("Remote Exception occured while contacting client.");

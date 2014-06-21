@@ -9,18 +9,18 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import registry.RegistryProcessor;
 
 
 public class Communicator {
 	
 	// accept created socket and do not close it after use
 	public static void sendMessage(Socket sendingSocket, Message m) throws InterruptedException, IOException {
-		if(sendingSocket == null || !sendingSocket.isClosed())
+		if(sendingSocket == null)
 			throw new IOException("Communicator received invalid socket");
 		ObjectOutputStream os = new ObjectOutputStream(sendingSocket.getOutputStream());
 		os.writeObject(m);
 		Thread.sleep(200);
-		os.close();
 	}
 
 	// create the socket, send message and then close the socket
@@ -35,7 +35,7 @@ public class Communicator {
 	public static Message receiveMessage(Socket receivingSocket) throws InterruptedException, IOException, ClassNotFoundException {
 		ObjectInputStream is = new ObjectInputStream(receivingSocket.getInputStream());
 		Object newObj = (Object)is.readObject();
-		is.close();
+		
 		if (newObj == null){
             throw new IOException("Received a null message");
         }
@@ -45,14 +45,10 @@ public class Communicator {
 	// create socket, accept message and close the socket
 	public static Message sendAndReceiveMessage(String hostName, int port, Message inputMessage) throws InterruptedException, UnknownHostException, IOException, ClassNotFoundException {
 		Socket socket = new Socket(InetAddress.getByName(hostName),port);
-		sendMessage(socket, inputMessage);
-		Message returnMessage = receiveMessage(socket); 
-		//close sending socket
+		Communicator.sendMessage(socket, inputMessage);
+		Message newObj = (Message)Communicator.receiveMessage(socket);
 		socket.close();
-		if (returnMessage == null){
-            throw new IOException("Received a null message");
-        }
-		return returnMessage;
+		return newObj;
 	}
 	
 	// create server socket, keep listening for requests, create thread for handling message

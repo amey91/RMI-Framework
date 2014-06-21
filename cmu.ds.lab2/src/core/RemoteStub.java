@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import communication.Communicator;
 import communication.InvocationMessage;
 import communication.Message;
+import communication.ReturnMessage;
 
 public class RemoteStub {
 	RemoteObjectReference ror;
@@ -29,7 +30,7 @@ public class RemoteStub {
 		
 		// TODO if the received object is remote object, then return `a stub object
 		
-		return (Object)returnResult;
+		return ((ReturnMessage)returnResult).result;
 	}
 }
 

@@ -9,6 +9,7 @@ import communication.Communicator;
 import communication.Message;
 import communication.MessageType;
 import core.Remote440Exception;
+import example1.*;
 
 
 
@@ -32,15 +33,15 @@ public class Naming {
 		Message newmsg = new Message(null, MessageType.LOOKUP, bindName);
 		Message recvdObj;
 		try {
-			recvdObj = Communicator.sendAndReceiveMessage(InetAddress.getByName(ip).toString(),port, newmsg);
+			recvdObj = Communicator.sendAndReceiveMessage(ip.toString(),port, newmsg);
 		} catch (ClassNotFoundException | InterruptedException | IOException e1) {
 			e1.printStackTrace();
 			throw new Remote440Exception(e1.getMessage());
 		}
 		
 		
-		if(recvdObj.type != MessageType.REBIND ){
-			System.out.println("Received object not REBIND");
+		if(recvdObj.type != MessageType.LOOKUP){
+			System.out.println("Received object not LOOKUP");
 			return null;
 		}
 		
@@ -49,7 +50,7 @@ public class Naming {
 		Class<?> stubClass = null;
 		Constructor<?> constructorNew = null;
 		Remote440 instance = null;
-		String stubName = ror.interfaceImplemented + "_stub";
+		String stubName = ror.interfaceImplemented + "_Stub";
 		// instantiate stub class by name 
 		try{
 			stubClass = Class.forName(stubName);
@@ -79,22 +80,21 @@ public class Naming {
 			return  new String[0];
 		}
 		
-		if(address.indexOf(":") == -1 || address.indexOf("/")==-1){
-			System.out.println("Lookuop Usage: RegistryIP:RegistryPort/bindname");
+		if(address.indexOf(":") == -1 || address.indexOf("/")!=-1){
+			System.out.println("List Usage: RegistryIP:RegistryPort");
 			return  new String[0];
 		}
-		String[] raw = address.split("/");
-		String bindName = raw[1];
-		String[] raw2 = raw[0].split(":");
+		
+		String[] raw2 = address.split(":");
 		String ip = raw2[0];
 		int port = Integer.parseInt(raw2[1]);
 		
 
-		Message newmsg = new Message(null, MessageType.LOOKUP, bindName);
+		Message newmsg = new Message(null, MessageType.LIST);
 		Message recvdObj;
 		String names = null;
 		try {
-			recvdObj = Communicator.sendAndReceiveMessage(InetAddress.getByName(ip).toString(),port, newmsg);
+			recvdObj = Communicator.sendAndReceiveMessage(ip.toString(),port, newmsg);
 			if(recvdObj.type != MessageType.LIST ){
 				System.out.println("Received object not LIST");
 				return new String[0];
