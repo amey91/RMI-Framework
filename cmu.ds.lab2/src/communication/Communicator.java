@@ -12,86 +12,80 @@ import java.net.UnknownHostException;
 
 
 public class Communicator {
-	public static int sendMessage(Socket sendingSocket, Message m) throws InterruptedException, IOException {
+	
+	// accept created socket and do not close it after use
+	public static void sendMessage(Socket sendingSocket, Message m) throws InterruptedException, IOException {
+		if(sendingSocket == null || !sendingSocket.isClosed())
+			throw new IOException("Communicator received invalid socket");
 		ObjectOutputStream os = new ObjectOutputStream(sendingSocket.getOutputStream());
 		os.writeObject(m);
 		Thread.sleep(200);
-		return 0;
+		os.close();
+	}
+
+	// create the socket, send message and then close the socket
+	public static void sendMessage(String hostName, int port, Message m) throws InterruptedException, UnknownHostException, IOException {
+		Socket sendingSocket = new Socket(InetAddress.getByName(hostName),port);
+		sendMessage(sendingSocket, m);
+		//close sending socket
+		sendingSocket.close();
 	}
 	
-	public static Message receiveMessage(Socket sendingSocket) throws InterruptedException, IOException, ClassNotFoundException {
-		ObjectInputStream is = new ObjectInputStream(sendingSocket.getInputStream());
-		
+	// take socket, receive message and do not close socket
+	public static Message receiveMessage(Socket receivingSocket) throws InterruptedException, IOException, ClassNotFoundException {
+		ObjectInputStream is = new ObjectInputStream(receivingSocket.getInputStream());
 		Object newObj = (Object)is.readObject();
-		if (!(newObj instanceof Message)){
-			System.out.println("Received a unidentified/corrupted message");
-            return null;
+		is.close();
+		if (newObj == null){
+            throw new IOException("Received a null message");
         }
 		return (Message)newObj;
 	}
-
-	public static int sendMessage(String hostName, int port, Message m) throws InterruptedException, UnknownHostException, IOException {
-		Socket sendingSocket = new Socket(InetAddress.getByName(hostName),port);
-		int returnVal = sendMessage(sendingSocket, m);
-
-		//close sending socket
-		sendingSocket.close();
-		return returnVal;
-		
-		
-	}
 	
+	// create socket, accept message and close the socket
 	public static Message sendAndReceiveMessage(String hostName, int port, Message inputMessage) throws InterruptedException, UnknownHostException, IOException, ClassNotFoundException {
 		Socket socket = new Socket(InetAddress.getByName(hostName),port);
-		int returnVal = sendMessage(socket, inputMessage);
-		
-		if(returnVal!=0)
-			return null;
+		sendMessage(socket, inputMessage);
 		Message returnMessage = receiveMessage(socket); 
 		//close sending socket
 		socket.close();
+		if (returnMessage == null){
+            throw new IOException("Received a null message");
+        }
 		return returnMessage;
-		
 	}
 	
-	public static Message listenForMessage(int port) throws InterruptedException, IOException, ClassNotFoundException {
-		ServerSocket listeningSocket = new ServerSocket(port);
-		Socket clientSocket = listeningSocket.accept();
-		Message m = receiveMessage(clientSocket);
-		
-		clientSocket.close();
-		listeningSocket.close();
-		
-		return m;
-	}
-	
-	public static Message listenForMessages(int port,Class<?> T)  {
+	// create server socket, keep listening for requests, create thread for handling message
+	@SuppressWarnings("resource")
+	public static void listenForMessages(int port,Class<?> T)  {
 		//initialize listening socket
 		ServerSocket listeningSocket = null;
+		
+		Constructor<?> constructorNew = null;
+		try {
+			constructorNew = T.getConstructor(Socket.class);
+
+			listeningSocket = new ServerSocket(port);
+
+		} catch (NoSuchMethodException | SecurityException | IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
 		
 		while(true){
 			// setup the heartbeat socket for the server that listens to clients 
 			try {
-				listeningSocket = new ServerSocket(port);
-				System.out.println("RegistryServer waiting for new message...");
+				System.out.println(T.getName() + " waiting for new message...");
 				Socket clientSocket = listeningSocket.accept();
-				Constructor<?> constructorNew = T.getConstructor(Socket.class);
-				
 				SocketThread instance = (SocketThread)constructorNew.newInstance((Object)clientSocket);
 				new Thread(instance).start();
 				
-			} catch (IOException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				System.out.println("Error while opening port at registry server");
+			} catch (IOException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				System.out.println("Error while opening port at registry server");				
 				e.printStackTrace();
-			} finally {
-				try {
-					listeningSocket.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
-		}
+		}//end of true
+		
 	}
 		
 	

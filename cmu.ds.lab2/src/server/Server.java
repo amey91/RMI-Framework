@@ -69,11 +69,10 @@ public class Server {
 		
 		Communicator.listenForMessages(Server.INITIAL_SERVER_PORT, ServerProcessor.class);
 		
-	}
+	}//end of main
 	
 	// @return 0 if successful 
 	// @return return -1 if any error
-	
 	private static int storeAndSend(RemoteObjectReference r, Object newObj) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
 		serverMap.put(r.bindname, newObj);
 		// contact registry and register
