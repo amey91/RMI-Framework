@@ -6,14 +6,14 @@ public class InvocationMessage extends Message{
 	
 	public String methodName;
 	public Object[] objectArray;
-	public Class[] classArray;
+	public Class<?>[] classArray;
 	
 
 	public InvocationMessage(RemoteObjectReference r) {
 		super(r);
 	}
 
-	public InvocationMessage(RemoteObjectReference r, String s, Object[] objArr, Class[] classArr) {
+	public InvocationMessage(RemoteObjectReference r, String s, Object[] objArr, Class<?>[] classArr) {
 		super(r);
 		methodName = s;
 		objectArray = objArr ;

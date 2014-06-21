@@ -1,14 +1,11 @@
 package core;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
+import communication.Communicator;
 import communication.InvocationMessage;
+import communication.Message;
 
 public class RemoteStub {
 	RemoteObjectReference ror;
@@ -17,25 +14,22 @@ public class RemoteStub {
 		this.ror = ror;
 	}
 	
-	public Object invoke(String methodName, Object[] objects, Class[] classes) throws UnknownHostException, IOException, ClassNotFoundException{
+	public Object invoke(String methodName, Object[] objects, Class<?>[] classes) throws Remote440Exception {
 		// open port and send
 		InvocationMessage invMsg = new InvocationMessage(this.ror, methodName, objects, classes);
 	
-		Socket newSocket = new Socket(InetAddress.getByName(this.ror.serverIP),this.ror.serverPort);
-		ObjectInputStream inobj = new ObjectInputStream(newSocket.getInputStream());
-		ObjectOutputStream outObj = new ObjectOutputStream(newSocket.getOutputStream());
+		Message returnResult;
+		try {
+			returnResult = Communicator.sendAndReceiveMessage(InetAddress.getByName(this.ror.serverIP).toString(),this.ror.serverPort, invMsg);
+		} catch (ClassNotFoundException
+				| InterruptedException | IOException e) {
+			e.printStackTrace();
+			throw new Remote440Exception(e.getMessage());
+		}
 		
-		//first send method name, then param objects, then class types
-		outObj.writeObject(invMsg);
-		Object in = (Object)inobj.readObject(); 
+		// TODO if the received object is remote object, then return `a stub object
 		
-		// TODO if the received object is remote object, then return a stub object
-		
-		//close socket
-		inobj.close();
-		outObj.close();
-		newSocket.close();
-		return in;
+		return (Object)returnResult;
 	}
 }
 

@@ -1,27 +1,24 @@
 package server;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.rmi.RemoteException;
 import java.util.concurrent.ConcurrentHashMap;
 
+import communication.Communicator;
 import communication.ExceptionMessage;
 import communication.InvocationMessage;
 import communication.Message;
 import communication.MessageType;
 import communication.ReturnMessage;
-import core.Remote440;
+import communication.SocketThread;
 import core.RemoteObjectReference;
 import example1.CalciInterface;
 import registry.RegistryServer;
+
 
 public class Server {
 	// hashmap for storing String:ActualServerObject
@@ -34,7 +31,7 @@ public class Server {
 	static String registryIp;
 	static int registryPort;
 	
-	public static void main(String args[]) throws UnknownHostException, IOException, ClassNotFoundException{
+	public static void main(String args[]) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
 		if(args.length != 2){
 			log("Usage: java Server <registry_ip> <registry_port>");
 			System.exit(0);
@@ -70,44 +67,20 @@ public class Server {
 		// TODO @test  remove
 		int i5 = deleteAndRemove("Calci1");
 		
-		ServerSocket listeningSocket = null;
-		
-		while(true){
-			// setup the invocation socket for the server that listens to clients 
-			try {
-				listeningSocket = new ServerSocket(Server.INITIAL_SERVER_PORT);
-				log("Server waiting for new message...");
-				Socket clientSocket = listeningSocket.accept();
-				new Thread(new ServerProcessor(clientSocket)).start();
-				
-			} catch (IOException e) {
-				log("Error while opening port at server");
-				e.printStackTrace();
-			}
-		}
+		Communicator.listenForMessages(Server.INITIAL_SERVER_PORT, ServerProcessor.class);
 		
 	}
 	
 	// @return 0 if successful 
 	// @return return -1 if any error
 	
-	private static int storeAndSend(RemoteObjectReference r, Object newObj) throws UnknownHostException, IOException{
+	private static int storeAndSend(RemoteObjectReference r, Object newObj) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
 		serverMap.put(r.bindname, newObj);
 		// contact registry and register
 		Message newmsg = new Message(r, MessageType.REBIND, r.bindname);
 		
-		Socket registrySocket = new Socket(Server.registryIp,Server.registryPort);
-		ObjectInputStream inobj = new ObjectInputStream(registrySocket.getInputStream());
-		ObjectOutputStream outObj = new ObjectOutputStream(registrySocket.getOutputStream());
-		outObj.writeObject(newmsg);
-		
-		Message recvdObj;
-		try {
-			recvdObj = (Message)inobj.readObject();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			return -1;
-		}
+		Message recvdObj = Communicator.sendAndReceiveMessage(Server.registryIp,Server.registryPort, newmsg);
+	
 		if(recvdObj.type != MessageType.REBIND ){
 			return -1;
 		}
@@ -116,15 +89,10 @@ public class Server {
 	}
 	
 	// @return 0 if successful. -1 if not
-	public static int deleteAndRemove(String bindName) throws UnknownHostException, IOException, ClassNotFoundException{
+	public static int deleteAndRemove(String bindName) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
 		// contact registry and register
 		Message newmsg = new Message(null, MessageType.REMOVE, bindName);
-		
-		Socket registrySocket = new Socket(Server.registryIp,Server.registryPort);
-		ObjectInputStream inobj = new ObjectInputStream(registrySocket.getInputStream());
-		ObjectOutputStream outObj = new ObjectOutputStream(registrySocket.getOutputStream());
-		outObj.writeObject(newmsg);
-		Message inMsg = (Message) inobj.readObject();
+		Message inMsg = Communicator.sendAndReceiveMessage(Server.registryIp,Server.registryPort, newmsg);
 		
 		if(!Server.serverMap.containsKey(bindName)){
     		//object does not exists Thus remove failed
@@ -145,41 +113,24 @@ public class Server {
 }
 
 
-class ServerProcessor extends java.lang.Thread {
-	Socket clientSocket=null;
+class ServerProcessor extends SocketThread {
 	
 	public ServerProcessor(Socket clientSocket){
-		this.clientSocket = clientSocket;
+		super(clientSocket);
 	}
 	
 	@Override
 	public void run(){
-		ObjectInputStream inobj = null;
-		ObjectOutputStream outObj = null ;
-		InvocationMessage newMsg = null;
 		try {
-			inobj = new ObjectInputStream(clientSocket.getInputStream());
-			outObj = new ObjectOutputStream(clientSocket.getOutputStream());
-		} catch (IOException e) {
-			try {
-				clientSocket.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			e.printStackTrace();
-		}
-		
-		//read object invocation and unmarshall elements
-		try {
-			newMsg = (InvocationMessage) inobj.readObject();
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
-		
-		
-		try {
-			Class<?> classRef = null;
+
+			InvocationMessage newMsg = null;
+
+			Message recvMessage = Communicator.receiveMessage(clientSocket);
 			
+			//read object invocation and unmarshall elements
+			newMsg = (InvocationMessage) recvMessage;
+			
+			Class<?> classRef = null;
 			
 			String className = newMsg.remoteObjectRef.interfaceImplemented+"Interface";
 			// instantiate stub class by name 
@@ -192,36 +143,30 @@ class ServerProcessor extends java.lang.Thread {
 						
 			if(!Server.serverMap.containsKey(newMsg.remoteObjectRef.bindname)){
 				ExceptionMessage em = new ExceptionMessage("Bindname not found at server");
-				outObj.writeObject(em);	
+				Communicator.sendMessage(clientSocket, em);
 			}else{
 				Object ok = myMethod.invoke(Server.serverMap.get(newMsg.remoteObjectRef.bindname), newMsg.objectArray);
 				ReturnMessage r = new ReturnMessage(ok);
-				outObj.writeObject(r);
+				Communicator.sendMessage(clientSocket, r);
 			}
 						
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException 
 				| IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IOException  e) {
+				| InvocationTargetException | IOException | InterruptedException  e) {
 			//send error message
 			try {
 				ExceptionMessage em = new ExceptionMessage(e.getMessage());
-				outObj.writeObject(em);
-			} catch (IOException e1) {
+				Communicator.sendMessage(clientSocket, em);
+			} catch (IOException | InterruptedException e1) {
 				e1.printStackTrace();
 			}
 			e.printStackTrace();
 		}finally{
 			try {
-				inobj.close();
-				outObj.close();
 				clientSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} 
-
+			}
 		}
-		
 	}
-	
 }
-

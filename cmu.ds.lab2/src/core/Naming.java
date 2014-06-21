@@ -1,28 +1,26 @@
 package core;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
+import communication.Communicator;
 import communication.Message;
 import communication.MessageType;
+import core.Remote440Exception;
 
 
 
 public class Naming {
-	public static Remote440 lookup(String address) throws UnknownHostException, IOException {
+	public static Remote440 lookup(String address) throws Remote440Exception {
 		if(address == null || address == ""){
-			// TODO
+			throw new Remote440Exception("Invalid Address");
 		}
 		
 		if(address.indexOf(":") == -1 || address.indexOf("/")==-1){
-			System.out.println("Lookuop Usage: RegistryIP:RegistryPort/bindname");
-			return null;
+			System.out.println("Lookup Usage: RegistryIP:RegistryPort/bindname");
+			new Remote440Exception("Invalid Address");
 		}
 		String[] raw = address.split("/");
 		String bindName = raw[1];
@@ -30,19 +28,17 @@ public class Naming {
 		String ip = raw2[0];
 		int port = Integer.parseInt(raw2[1]);
 		
-		
-		// TODO get from server
-		Socket serverS = new Socket(InetAddress.getByName(ip),port);
-		ObjectInputStream inobj = new ObjectInputStream(serverS.getInputStream());
-		ObjectOutputStream outObj = new ObjectOutputStream(serverS.getOutputStream());
+
 		Message newmsg = new Message(null, MessageType.LOOKUP, bindName);
 		Message recvdObj;
 		try {
-			recvdObj = (Message)inobj.readObject();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			return null;
+			recvdObj = Communicator.sendAndReceiveMessage(InetAddress.getByName(ip).toString(),port, newmsg);
+		} catch (ClassNotFoundException | InterruptedException | IOException e1) {
+			e1.printStackTrace();
+			throw new Remote440Exception(e1.getMessage());
 		}
+		
+		
 		if(recvdObj.type != MessageType.REBIND ){
 			System.out.println("Received object not REBIND");
 			return null;
@@ -76,7 +72,7 @@ public class Naming {
 		return instance;
 	}
 	
-	public static String[] List(String address) throws UnknownHostException, IOException{
+	public static String[] List(String address) throws Remote440Exception{
 		if(address == null || address == ""){
 			// TODO
 			System.out.println("Address balnk. Exiting List method.");
@@ -93,25 +89,23 @@ public class Naming {
 		String ip = raw2[0];
 		int port = Integer.parseInt(raw2[1]);
 		
-		Socket serverS = new Socket(InetAddress.getByName(ip),port);
-		ObjectInputStream inobj = new ObjectInputStream(serverS.getInputStream());
-		ObjectOutputStream outObj = new ObjectOutputStream(serverS.getOutputStream());
+
 		Message newmsg = new Message(null, MessageType.LOOKUP, bindName);
 		Message recvdObj;
+		String names = null;
 		try {
-			recvdObj = (Message)inobj.readObject();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			return  new String[0];
-		}
-		if(recvdObj.type != MessageType.LIST ){
-			System.out.println("Received object not LIST");
-			return new String[0];
+			recvdObj = Communicator.sendAndReceiveMessage(InetAddress.getByName(ip).toString(),port, newmsg);
+			if(recvdObj.type != MessageType.LIST ){
+				System.out.println("Received object not LIST");
+				return new String[0];
+			}
+			
+			names = recvdObj.comments;
+		} catch (ClassNotFoundException | InterruptedException | IOException e) {
+			throw new Remote440Exception(e.getMessage());
 		}
 		
-		String names = recvdObj.comments;
+		
 		return names.split(" ");				
-	}
-	
-	
+	}	
 }
