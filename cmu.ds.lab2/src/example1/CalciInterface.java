@@ -8,5 +8,5 @@ public interface CalciInterface extends Remote440{
 	public int add(int a, int b) throws Remote440Exception;
 	public void setMemory(int b) throws Remote440Exception;
 	public int addMemory(int b) throws Remote440Exception;
-	
+	public CalciInterface getNewCalci(String bnindName) throws Remote440Exception;
 }

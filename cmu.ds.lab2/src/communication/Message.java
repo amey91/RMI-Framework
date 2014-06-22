@@ -43,5 +43,9 @@ public class Message implements java.io.Serializable{
 	public Message(String exceptionMsg){
 		comments = exceptionMsg;
 	}
+	
+	public String toString(){
+		return "MESSAGE-Type: "+ this.type.toString() +" MESSAGE-Payload: "+ this.comments + "| MESSAGE-RoR: "+ this.remoteObjectRef+ " ";
+	}
 }
 

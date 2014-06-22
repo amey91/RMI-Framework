@@ -18,19 +18,25 @@ public class RemoteStub {
 	public Object invoke(String methodName, Object[] objects, Class<?>[] classes) throws Remote440Exception {
 		// open port and send
 		InvocationMessage invMsg = new InvocationMessage(this.ror, methodName, objects, classes);
-	
+		//iterate params and replace all objects that inherit Remote440 with their Ror
+		
 		Message returnResult;
 		try {
-			returnResult = Communicator.sendAndReceiveMessage(InetAddress.getByName(this.ror.serverIP).toString(),this.ror.serverPort, invMsg);
+			returnResult = Communicator.sendAndReceiveMessage(this.ror.serverIP.toString(),this.ror.serverPort, invMsg);
 		} catch (ClassNotFoundException
 				| InterruptedException | IOException e) {
 			e.printStackTrace();
 			throw new Remote440Exception(e.getMessage());
 		}
-		
+		Object result = ((ReturnMessage)returnResult).result;
+		if(result instanceof RemoteObjectReference)
+		{
+			RemoteObjectReference ror = (RemoteObjectReference)result;
+			result = Naming.RorToStub(ror);
+		}
 		// TODO if the received object is remote object, then return `a stub object
 		
-		return ((ReturnMessage)returnResult).result;
+		return result;
 	}
 }
 

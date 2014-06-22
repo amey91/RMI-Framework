@@ -66,5 +66,16 @@ public class Calci_Stub extends RemoteStub implements CalciInterface,Remote440 {
 		}
 		
 	}
-	
+
+	@Override
+	public CalciInterface getNewCalci(String bindName) throws Remote440Exception {
+		try{
+			return	(CalciInterface) invoke("getNewCalci", new Object[]{new String(bindName)},new Class[]{String.class});
+		}
+		catch (Exception e){
+			throw new Remote440Exception(e.getMessage());
+		}
+		
+	}
+
 }

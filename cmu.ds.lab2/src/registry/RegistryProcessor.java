@@ -76,6 +76,7 @@ public class RegistryProcessor extends SocketThread{
             	else{
             		//TODO handle at server
             		//registry already has this key. Send exception msg
+            		System.out.println("Object already existes in registry. Cannot BIND.");
             		ExceptionMessage newExceptionMsg = new ExceptionMessage("Object already existes in registry. Cannot BIND.");
             		Communicator.sendMessage(clientSocket, newExceptionMsg);
             	}
@@ -116,4 +117,10 @@ public class RegistryProcessor extends SocketThread{
 			}
 		}
 	}	
+}
+
+
+class RegistryDisplayer extends Thread{
+	
+	
 }

@@ -14,6 +14,33 @@ import example1.*;
 
 
 public class Naming {
+	public static Remote440 RorToStub(RemoteObjectReference ror) throws Remote440Exception
+	{
+		Class<?> stubClass = null;
+		Constructor<?> constructorNew = null;
+		Remote440 instance = null;
+		String stubName = ror.interfaceImplemented + "_Stub";
+		// instantiate stub class by name 
+		try{
+			stubClass = Class.forName(stubName);
+		} catch(ClassNotFoundException e){
+			// TODO get class by HTTP
+			throw new Remote440Exception("Ror to stub failed");
+		}
+		try {
+			constructorNew = stubClass.getConstructor(RemoteObjectReference.class);
+		} catch (NoSuchMethodException | SecurityException e) {
+			throw new Remote440Exception("Ror to stub failed");
+		}
+		
+		try {
+			instance = (Remote440)constructorNew.newInstance((Object)ror);
+		} catch (InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e) {
+			throw new Remote440Exception("Ror to stub failed");
+		}
+		return instance;
+	}
 	public static Remote440 lookup(String address) throws Remote440Exception {
 		if(address == null || address == ""){
 			throw new Remote440Exception("Invalid Address");
@@ -47,30 +74,8 @@ public class Naming {
 		
 		RemoteObjectReference ror = recvdObj.remoteObjectRef;
 		
-		Class<?> stubClass = null;
-		Constructor<?> constructorNew = null;
-		Remote440 instance = null;
-		String stubName = ror.interfaceImplemented + "_Stub";
-		// instantiate stub class by name 
-		try{
-			stubClass = Class.forName(stubName);
-		} catch(ClassNotFoundException e){
-			// TODO get class by HTTP
-			e.printStackTrace();
-		}
-		try {
-			constructorNew = stubClass.getConstructor(RemoteObjectReference.class);
-		} catch (NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-		}
 		
-		try {
-			instance = (Remote440)constructorNew.newInstance((Object)ror);
-		} catch (InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return instance;
+		return RorToStub(ror);
 	}
 	
 	public static String[] List(String address) throws Remote440Exception{
@@ -94,7 +99,8 @@ public class Naming {
 		Message recvdObj;
 		String names = null;
 		try {
-			recvdObj = Communicator.sendAndReceiveMessage(ip.toString(),port, newmsg);
+			System.out.println("Naming: sending object to "+ip + ":"+ port + " " + newmsg);
+			recvdObj = Communicator.sendAndReceiveMessage(ip,port, newmsg);
 			if(recvdObj.type != MessageType.LIST ){
 				System.out.println("Received object not LIST");
 				return new String[0];
@@ -102,6 +108,8 @@ public class Naming {
 			
 			names = recvdObj.comments;
 		} catch (ClassNotFoundException | InterruptedException | IOException e) {
+			// TODO delete stack trace
+			e.printStackTrace();
 			throw new Remote440Exception(e.getMessage());
 		}
 		

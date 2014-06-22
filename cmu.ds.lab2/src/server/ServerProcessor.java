@@ -13,9 +13,11 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import core.Remote440;
+import core.RemoteObjectReference;
 import example1.CalciInterface;
 
-class ServerProcessor extends SocketThread {
+public class ServerProcessor extends SocketThread {
 	
 	public ServerProcessor(Socket clientSocket){
 		super(clientSocket);
@@ -47,7 +49,11 @@ class ServerProcessor extends SocketThread {
 				ExceptionMessage em = new ExceptionMessage("Bindname not found at server");
 				Communicator.sendMessage(clientSocket, em);
 			}else{
-				Object ok = myMethod.invoke(Server.serverMap.get(newMsg.remoteObjectRef.bindname), newMsg.objectArray);
+				String bn = newMsg.remoteObjectRef.bindname;
+				Object ok = myMethod.invoke(Server.serverMap.get(bn), newMsg.objectArray);
+				if( ok instanceof Remote440)
+					ok = Server.serverRorMap.get(ok);//ok = Server.serverMap.	
+					
 				ReturnMessage r = new ReturnMessage(ok);
 				Communicator.sendMessage(clientSocket, r);
 			}

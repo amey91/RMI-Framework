@@ -1,4 +1,4 @@
-package given_by_kesden;
+package given_by_prof;
 import java.util.*;
 
 // This is simple. ROR needs a new object key for each remote object (or its skeleton). 

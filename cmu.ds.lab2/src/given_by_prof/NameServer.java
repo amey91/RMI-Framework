@@ -1,4 +1,4 @@
-package given_by_kesden;
+package given_by_prof;
 
 
 public interface NameServer // extends YourRemote

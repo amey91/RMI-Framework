@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import registry.RegistryProcessor;
+import server.ServerProcessor;
 
 
 public class Communicator {
@@ -44,7 +45,7 @@ public class Communicator {
 	
 	// create socket, accept message and close the socket
 	public static Message sendAndReceiveMessage(String hostName, int port, Message inputMessage) throws InterruptedException, UnknownHostException, IOException, ClassNotFoundException {
-		Socket socket = new Socket(InetAddress.getByName(hostName),port);
+		Socket socket = new Socket(hostName,port);
 		Communicator.sendMessage(socket, inputMessage);
 		Message newObj = (Message)Communicator.receiveMessage(socket);
 		socket.close();
@@ -62,6 +63,8 @@ public class Communicator {
 			constructorNew = T.getConstructor(Socket.class);
 
 			listeningSocket = new ServerSocket(port);
+			System.out.println(T.getName()+ " listening on "+ listeningSocket.getInetAddress().getHostAddress()+ ":"+ listeningSocket.getLocalPort());
+			
 
 		} catch (NoSuchMethodException | SecurityException | IOException e1) {
 			e1.printStackTrace();
