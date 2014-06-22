@@ -80,8 +80,7 @@ public class Naming {
 	
 	public static String[] List(String address) throws Remote440Exception{
 		if(address == null || address == ""){
-			// TODO
-			System.out.println("Address balnk. Exiting List method.");
+			System.out.println("Address blank. Exiting List method.");
 			return  new String[0];
 		}
 		
@@ -108,8 +107,6 @@ public class Naming {
 			
 			names = recvdObj.comments;
 		} catch (ClassNotFoundException | InterruptedException | IOException e) {
-			// TODO delete stack trace
-			e.printStackTrace();
 			throw new Remote440Exception(e.getMessage());
 		}
 		

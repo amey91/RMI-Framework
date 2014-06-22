@@ -54,7 +54,7 @@ public class Server {
 			return;
 		}
 		}
-		serverIp = "127.0.0.1";
+		
 		RemoteObjectReference  r1 = new RemoteObjectReference(serverIp, INITIAL_SERVER_PORT, "Calci1" , "example1.Calci");
 		RemoteObjectReference  r2 = new RemoteObjectReference(serverIp, INITIAL_SERVER_PORT, "Calci2" , "example1.Calci");
 		RemoteObjectReference  r3 = new RemoteObjectReference(serverIp, INITIAL_SERVER_PORT, "Calci3" , "example1.Calci");
