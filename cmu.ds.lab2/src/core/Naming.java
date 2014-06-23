@@ -3,13 +3,11 @@ package core;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
 
 import communication.Communicator;
 import communication.Message;
 import communication.MessageType;
 import core.Remote440Exception;
-import example1.*;
 
 
 

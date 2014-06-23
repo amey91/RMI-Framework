@@ -41,19 +41,19 @@ public class Server {
 			ssss.close();
 			
 		}else{
-		//deployed on unix.andrew
-		registryIp = args[0];
-		registryPort = Integer.parseInt(args[1]);
-		
-		try {
-			serverIp = InetAddress.getLocalHost().getHostAddress();
+			//deployed on unix.andrew
+			registryIp = args[0];
+			registryPort = Integer.parseInt(args[1]);
 			
-			
-		} catch (UnknownHostException e1) {
-			log("Error while creating remote object");
-			e1.printStackTrace();
-			return;
-		}
+			try {
+				serverIp = InetAddress.getLocalHost().getHostAddress();
+				
+				
+			} catch (UnknownHostException e1) {
+				log("Error while creating remote object");
+				e1.printStackTrace();
+				return;
+			}
 		}
 		
 		RemoteObjectReference  r1 = new RemoteObjectReference(serverIp, INITIAL_SERVER_PORT, "Calci1" , "example1.Calci");
@@ -70,9 +70,8 @@ public class Server {
 		int i3 = storeAndSend(r3,a3,MessageType.REBIND);
 		int i4 = storeAndSend(r4,a4,MessageType.REBIND);
 		
-		// TODO @test  remove
+		// remove Calci1 object from this server as well as registry server.
 		int i5 = deleteAndRemove("Calci1");
-		
 		Communicator.listenForMessages(Server.INITIAL_SERVER_PORT, ServerProcessor.class);
 		
 	}//end of main

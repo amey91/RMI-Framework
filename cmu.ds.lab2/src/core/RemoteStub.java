@@ -1,7 +1,6 @@
 package core;
 
 import java.io.IOException;
-import java.net.InetAddress;
 
 import communication.Communicator;
 import communication.InvocationMessage;
@@ -10,6 +9,10 @@ import communication.ReturnMessage;
 
 public class RemoteStub {
 	RemoteObjectReference ror;
+	
+	public RemoteObjectReference getRor(){
+		return this.ror;
+	}
 	
 	public RemoteStub(RemoteObjectReference ror){
 		this.ror = ror;

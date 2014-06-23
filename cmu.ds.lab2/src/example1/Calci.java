@@ -1,7 +1,6 @@
 package example1;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 import communication.MessageType;
 import server.Server;
@@ -10,21 +9,26 @@ import core.Remote440Exception;
 import core.RemoteObjectReference;
 
 public class Calci implements CalciInterface {
+
+	private static final long serialVersionUID = 3423680540325706606L;
+	
+	// this variable will be called by the client but will be stored only on the server
 	private int memoryVar = 0;
 	
 	@Override
 	public int add(int a, int b) {
-		
 		return a+b;
 	}
 
 	@Override
 	public void setMemory(int b) {
+		// set the private variable to given value
 		memoryVar = b;
 	}
 
 	@Override
 	public int addMemory(int b) {
+		// adds the input variable to the private integer
 		return this.memoryVar + b;
 		
 	}

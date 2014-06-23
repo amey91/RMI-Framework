@@ -1,9 +1,5 @@
 package example1;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.UnknownHostException;
-
 import core.*;
 
 public class Calci_Stub extends RemoteStub implements CalciInterface,Remote440 {
@@ -14,7 +10,6 @@ public class Calci_Stub extends RemoteStub implements CalciInterface,Remote440 {
 
 	private static final long serialVersionUID = -8687192894869080070L;
 
-	@SuppressWarnings("finally")
 	@Override
 	public int add(int a, int b) throws Remote440Exception {
 		
