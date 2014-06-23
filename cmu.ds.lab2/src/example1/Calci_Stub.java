@@ -56,4 +56,15 @@ public class Calci_Stub extends RemoteStub implements CalciInterface,Remote440 {
 		
 	}
 
+	@Override
+	public String getUpperCaseString(String simpleString) throws Remote440Exception {
+		
+		try{
+			return (String)invoke("getUpperCaseString", new Object[]{new String(simpleString)}, new Class[] {String.class});		
+		}
+		catch (Exception e){
+			throw new Remote440Exception("Could not conver tString.");
+		}
+	}
+
 }

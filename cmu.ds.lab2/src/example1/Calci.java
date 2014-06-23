@@ -13,8 +13,10 @@ public class Calci implements CalciInterface {
 	private static final long serialVersionUID = 3423680540325706606L;
 	
 	// this variable will be called by the client but will be stored only on the server
+	// i.e. this is a stateful server variable
 	private int memoryVar = 0;
 	
+	// add two stateless integers
 	@Override
 	public int add(int a, int b) {
 		return a+b;
@@ -40,11 +42,19 @@ public class Calci implements CalciInterface {
 		Remote440 a = new example1.Calci();
 		try {
 			int i = Server.storeAndSend(ror,a, MessageType.REBIND);
-		} catch (ClassNotFoundException | IOException
-				| InterruptedException e) {
-			throw new Remote440Exception("Could not create remote object from within remote object");
+		} catch (ClassNotFoundException | IOException | InterruptedException e) {
+			// abstract away the server exception
+			throw new Remote440Exception("Could not create remote object from within remote object :(");
 		}
 		return (CalciInterface) a;
 	}
+
+	@Override
+	public String getUpperCaseString(String simpleString) throws Remote440Exception {
+		return simpleString.toUpperCase();
+	}
+
+	
+	
 
 }

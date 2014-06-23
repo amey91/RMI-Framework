@@ -61,6 +61,8 @@ public class Client {
 		newInterface.setMemory(newInterface.addMemory(4));
 		log("Adding 4 to new remote object variable: "+newInterface.addMemory(0));
 		
+		log("Converting 'darth - vader' to uppercase using newly received object: "+ newInterface.getUpperCaseString("darth - vader"));
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
 		//take user input and take necessary action
