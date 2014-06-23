@@ -21,7 +21,8 @@ public class Server {
 	
 	//overridden by cmd arguments 
 	public static int INITIAL_SERVER_PORT = 5555;
-	static String serverIp;
+	// need access to server ip from example packages
+	public static String serverIp;
 	static String registryIp;
 	static int registryPort;
 	

@@ -32,7 +32,7 @@ public class Calci implements CalciInterface {
 	@Override
 	public CalciInterface getNewCalci(String bindName) throws Remote440Exception {
 		// TODO CHANGE the way IPs are assigned
-		RemoteObjectReference  ror = new RemoteObjectReference("127.0.0.1", Server.INITIAL_SERVER_PORT, bindName, "example1.Calci");
+		RemoteObjectReference  ror = new RemoteObjectReference(server.Server.serverIp, Server.INITIAL_SERVER_PORT, bindName, "example1.Calci");
 		Remote440 a = new example1.Calci();
 		try {
 			int i = Server.storeAndSend(ror,a, MessageType.REBIND);

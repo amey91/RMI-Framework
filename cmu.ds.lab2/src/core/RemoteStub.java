@@ -29,12 +29,12 @@ public class RemoteStub {
 			throw new Remote440Exception(e.getMessage());
 		}
 		Object result = ((ReturnMessage)returnResult).result;
+		//check if the return message is a remote object, then return a stub for the remote object
 		if(result instanceof RemoteObjectReference)
 		{
 			RemoteObjectReference ror = (RemoteObjectReference)result;
 			result = Naming.RorToStub(ror);
 		}
-		// TODO if the received object is remote object, then return `a stub object
 		
 		return result;
 	}

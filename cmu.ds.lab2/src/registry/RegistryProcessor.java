@@ -120,7 +120,3 @@ public class RegistryProcessor extends SocketThread{
 }
 
 
-class RegistryDisplayer extends Thread{
-	
-	
-}

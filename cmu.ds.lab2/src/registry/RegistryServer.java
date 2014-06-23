@@ -1,7 +1,9 @@
 package registry;
 
 
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
+
 import communication.Communicator;
 import core.RemoteObjectReference;
 
@@ -24,6 +26,9 @@ public class RegistryServer {
 			log("Port for RegistryServer not specified. Starting on default port 1099.");
 		}
 		
+		//start a console for displaying bindNames on user requests
+		new Thread(new RegistryDisplayer()).start();
+		
 		//initialize hashmap
 		registryMap = new ConcurrentHashMap<String, RemoteObjectReference>();
 		
@@ -44,4 +49,24 @@ public class RegistryServer {
 	}
 }
 
-
+class RegistryDisplayer extends Thread{
+	
+	@Override
+	public void run(){
+		Scanner sc = new Scanner(System.in);
+		String userInput ="";
+		
+		while(true){
+			System.out.println("At any point, enter '5' to LIST ALL BINDNAMES held by this Registry Server.");
+			userInput = sc.next();
+			switch(userInput){
+			case "5":
+        		RegistryServer.displayRegistryMap();
+        		break;
+        	default:
+        		System.out.println("Registry Server only accepts '5' to display bindNames offered.");
+			}
+		}
+		
+	}
+}

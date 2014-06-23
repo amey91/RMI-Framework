@@ -1,19 +1,22 @@
 package client;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 import registry.RegistryServer;
 import server.Server;
 import core.Naming;
+import core.Remote440;
 import core.Remote440Exception;
 import example1.CalciInterface;
 
 public class Client {
 	//this is to ensure that each remote object one and only one stub
 	//it will map bindname to client stub objects
-	private static ConcurrentHashMap<String, Object> remoteObjMap 
-				= new ConcurrentHashMap<String, Object>();
+	private static ConcurrentHashMap<String, Remote440> clientMap 
+				= new ConcurrentHashMap<String, Remote440>();
 	
 	
 	public static void main(String args[]) throws Remote440Exception{
@@ -39,10 +42,46 @@ public class Client {
 		newInterface.setMemory(newInterface.addMemory(4));
 		System.out.println("Adding 4 to new remote object variable: "+newInterface.addMemory(0));
 		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
+		//take user input and take necessary action
+		 String userInput;
+         while (true) {
+         	try{
+         		log("Enter \n 1. Display received remote objects  "
+         				+ "\n 2. Lookup for remote objects "
+         				+ "\n 3. Delete received remote objects");
+         		userInput = br.readLine();
+         		if(userInput=="" || userInput==null){
+         			throw new Exception("Blank input not allowed.");
+         		}
+         		
+         		switch(userInput){
+         		case "1": //display
+         			
+         			break;
+         		case "2": //lookup
+         			break;
+         		case "3": //delete using bindname
+         			break;
+         		default: 
+         			log("Wrong entry found.");
+         			break;
+         		}
+         		
+         	}catch(Exception e){
+         		log(e.getMessage());
+         	}
+         	
+         }
+		
 	}
 	
 	// UI for lookup, list and input for searching bindnames
 	
+	private static void log(String a){
+		System.out.println(a);
+	}
 	
 	
 }

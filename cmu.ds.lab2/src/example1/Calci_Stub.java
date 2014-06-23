@@ -8,23 +8,6 @@ import core.*;
 
 public class Calci_Stub extends RemoteStub implements CalciInterface,Remote440 {
 	
-	 /* private static Method $method_add_0;
-	  private static Method $method_setMemory_0;
-	  private static Method $method_addMemory_0;
-	static
-	  {
-	    try
-	    {
-	    	$method_add_0 = CalciInterface.class.getMethod("add", new Class[]{Integer.TYPE,Integer.TYPE});
-	    	$method_setMemory_0 = CalciInterface.class.getMethod("setMemory", new Class[]{Integer.TYPE});
-	    	$method_addMemory_0 = CalciInterface.class.getMethod("addMemory", new Class[]{Integer.TYPE});
-		}
-	    catch (NoSuchMethodException localNoSuchMethodException)
-	    {
-	      throw new NoSuchMethodError("stub class initialization failed");
-	    }
-	  }
-	  */
 	public Calci_Stub(RemoteObjectReference ror) {
 		super(ror);
 	}

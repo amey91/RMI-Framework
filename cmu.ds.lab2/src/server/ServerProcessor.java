@@ -37,8 +37,8 @@ public class ServerProcessor extends SocketThread {
 			Class<?> classRef = null;
 			
 			String className = newMsg.remoteObjectRef.interfaceImplemented+"Interface";
-			// instantiate stub class by name 
 			
+			// instantiate stub class by name 
 			classRef = Class.forName(className);
 			
 			// TODO get class by HTTP
@@ -51,11 +51,13 @@ public class ServerProcessor extends SocketThread {
 			}else{
 				String bn = newMsg.remoteObjectRef.bindname;
 				Object ok = myMethod.invoke(Server.serverMap.get(bn), newMsg.objectArray);
+				// if return object is remote reference for client (i.e. local to server),
+				// then replace it with its remote reference
 				if( ok instanceof Remote440)
-					ok = Server.serverRorMap.get(ok);//ok = Server.serverMap.	
-					
-				ReturnMessage r = new ReturnMessage(ok);
-				Communicator.sendMessage(clientSocket, r);
+					ok = Server.serverRorMap.get(ok);	
+					// package the result
+					ReturnMessage r = new ReturnMessage(ok);
+					Communicator.sendMessage(clientSocket, r);
 			}
 						
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException 
