@@ -11,6 +11,7 @@ public class InvocationMessage extends Message{
 
 	public InvocationMessage(RemoteObjectReference r) {
 		super(r);
+		type = MessageType.NONE;
 	}
 
 	public InvocationMessage(RemoteObjectReference r, String s, Object[] objArr, Class<?>[] classArr) {
@@ -18,8 +19,8 @@ public class InvocationMessage extends Message{
 		methodName = s;
 		objectArray = objArr ;
 		classArray = classArr;
-	}
-	
+		type = MessageType.NONE;
+	}	
 
 	private static final long serialVersionUID = -2017799150612365253L;
 

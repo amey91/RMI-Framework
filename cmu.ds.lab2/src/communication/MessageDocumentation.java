@@ -9,7 +9,7 @@ package communication;
 
 public class MessageDocumentation {
 	/*
-	 *  abstract class Message describes a common message that will be sent
+	 *  class Message describes a common message that will be sent
 	 *  over the network. 
 	 *  3 other classes inherit from it and thus give us 3 main types of messages
 	 *  that can be sent over our system

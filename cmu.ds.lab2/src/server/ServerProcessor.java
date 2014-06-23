@@ -7,20 +7,19 @@ import communication.ExceptionMessage;
 import communication.InvocationMessage;
 import communication.Message;
 import communication.ReturnMessage;
-import communication.SocketThread;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import core.Remote440;
-import core.RemoteObjectReference;
-import example1.CalciInterface;
 
-public class ServerProcessor extends SocketThread {
-	
-	public ServerProcessor(Socket clientSocket){
-		super(clientSocket);
+public class ServerProcessor extends Thread {
+	RemoteObjectManager remoteObjectManager;
+	Socket clientSocket;
+	public ServerProcessor(Object remoteObjectManager, Socket clientSocket){
+		this.clientSocket = clientSocket;
+		this.remoteObjectManager = (RemoteObjectManager)remoteObjectManager;
 	}
 	
 	@Override
@@ -36,7 +35,7 @@ public class ServerProcessor extends SocketThread {
 			
 			Class<?> classRef = null;
 			
-			String className = newMsg.remoteObjectRef.interfaceImplemented+"Interface";
+			String className = newMsg.remoteObjectRef.getInterfaceImplemented() + "Interface";
 			
 			// instantiate stub class by name 
 			classRef = Class.forName(className);
@@ -45,16 +44,16 @@ public class ServerProcessor extends SocketThread {
 				
 			Method myMethod = classRef.getMethod(newMsg.methodName, newMsg.classArray);
 						
-			if(!Server.serverMap.containsKey(newMsg.remoteObjectRef.bindname)){
-				ExceptionMessage em = new ExceptionMessage("Bindname not found at server");
+			if(!remoteObjectManager.containsEntry(newMsg.remoteObjectRef.getBindName())){
+				ExceptionMessage em = new ExceptionMessage("Bindname not fkodfdound at server");
 				Communicator.sendMessage(clientSocket, em);
 			}else{
-				String bn = newMsg.remoteObjectRef.bindname;
-				Object ok = myMethod.invoke(Server.serverMap.get(bn), newMsg.objectArray);
+				String bn = newMsg.remoteObjectRef.getBindName();
+				Object ok = myMethod.invoke(remoteObjectManager.getActualObject(bn), newMsg.objectArray);
 				// if return object is remote reference for client (i.e. local to server),
 				// then replace it with its remote reference
 				if( ok instanceof Remote440)
-					ok = Server.serverRorMap.get(ok);	
+					ok = remoteObjectManager.getRor((Remote440) ok);	
 					// package the result
 					ReturnMessage r = new ReturnMessage(ok);
 					Communicator.sendMessage(clientSocket, r);

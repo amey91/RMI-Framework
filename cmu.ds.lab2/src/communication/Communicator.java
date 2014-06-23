@@ -9,9 +9,13 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import core.Remote440Exception;
 import registry.RegistryProcessor;
 import server.ServerProcessor;
 
+
+@SuppressWarnings("unused")
 
 public class Communicator {
 	
@@ -52,15 +56,23 @@ public class Communicator {
 		return newObj;
 	}
 	
+	public static String[] addressToIPPort(String address) throws UnknownHostException	{
+		if(address == null || address == ""){
+			throw new UnknownHostException("Invalid Network Address");
+		}
+		return address.split(":");
+		
+	}
+	
 	// create server socket, keep listening for requests, create thread for handling message
 	@SuppressWarnings("resource")
-	public static void listenForMessages(int port,Class<?> T)  {
+	public static void listenForMessages(int port, Object input, Class<?> T)  {
 		//initialize listening socket
 		ServerSocket listeningSocket = null;
 		
 		Constructor<?> constructorNew = null;
 		try {
-			constructorNew = T.getConstructor(Socket.class);
+			constructorNew = T. getConstructor(Object.class, Socket.class);
 
 			listeningSocket = new ServerSocket(port);
 			System.out.println(T.getName()+ " listening on "+ listeningSocket.getInetAddress().getHostAddress()+ ":"+ listeningSocket.getLocalPort());
@@ -76,16 +88,13 @@ public class Communicator {
 			try {
 				System.out.println(T.getName() + " waiting for new message...");
 				Socket clientSocket = listeningSocket.accept();
-				SocketThread instance = (SocketThread)constructorNew.newInstance((Object)clientSocket);
+				Thread instance = (Thread)constructorNew.newInstance(input, (Object)clientSocket);
 				new Thread(instance).start();
 				
 			} catch (IOException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				System.out.println("Error while opening port at registry server");				
 				e.printStackTrace();
 			}
-		}//end of true
-		
-	}
-		
-	
+		}//end of true	
+	}	
 }
