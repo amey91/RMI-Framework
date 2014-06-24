@@ -81,7 +81,7 @@ class ServerUpdater extends Thread{
 			try{
          		log("\n 1. Add new remote objects " 
          				+ "\n 2. Delete remote objects " 
-         				+ "\n 3. Add/remove test ");
+         				+ "\n 3. Run sample add/remove RMI tests (to get started)");
          		userInput = sc.nextLine();
          		if(userInput=="" || userInput==null){
          			throw new Exception("Blank input not allowed.");
