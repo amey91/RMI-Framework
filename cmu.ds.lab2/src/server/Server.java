@@ -29,7 +29,6 @@ public class Server {
 			registryPort = 1099;
 			
 			ServerSocket ss = new ServerSocket(6666);
-			// TODO CHANGE THIS IP!
 			serverIp = ss.getInetAddress().getHostAddress();
 			// InetAddress.getLocalHost()
 			ss.close();
@@ -79,6 +78,8 @@ class ServerUpdater extends Thread{
 		
 		while(true){
 			try{
+				//Remote440 a11 = new example1.Calci(remoteObjectManager);
+				//remoteObjectManager.InsertEntry("example1.Calci", "Calci1", a11, true);
          		log("\n 1. Add new remote objects " 
          				+ "\n 2. Delete remote objects " 
          				+ "\n 3. Run sample add/remove RMI tests (to get started)");
@@ -89,18 +90,21 @@ class ServerUpdater extends Thread{
          		int option = Integer.parseInt(userInput);
          		if(option == 1) //Add
          		{
-             		//TODO make some list to display
-             		log("Enter Service Name(example1.Calci): ");
+             		log("Enter Class Name(example1.Calci): ");
 
-             		String interfaceImpl = sc.nextLine();
-             		Class<?> stubClass = Class.forName(interfaceImpl);
-             		//TODO get arguments somehow - from user or map on server 
+             		String className = sc.nextLine();
+             		Class<?> stubClass = Class.forName(className);
+
              		Constructor<?> constructorNew = stubClass.getConstructor();
              		Remote440 remote = (Remote440)constructorNew.newInstance();
              		
-             		log("Enter new Bind Name: ");
+             		log("Enter Interface implemented: ");
+             		String interfaceName = sc.nextLine();
+             		
+             		log("Enter new BindName: ");
              		String bindName = sc.nextLine();
-             		remoteObjectManager.InsertEntry(interfaceImpl, bindName, remote, true);
+             		
+             		remoteObjectManager.InsertEntry(interfaceName, bindName, remote, true);
          		}
          		else if(option == 2) //Delete
          		{

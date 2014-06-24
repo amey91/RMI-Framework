@@ -3,7 +3,6 @@ package example1;
 import java.io.IOException;
 
 import communication.MessageType;
-import server.Server;
 import core.Remote440;
 import server.RemoteObjectManager;
 import core.Remote440Exception;
