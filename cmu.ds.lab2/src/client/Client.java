@@ -14,6 +14,7 @@ import example1.CalciInterface;
 public class Client {
 	//this is to ensure that each remote object one and only one stub
 	//it will map bindname to client stub objects
+	// TODO implement this map
 	private static ConcurrentHashMap<String, RemoteStub> clientMap 
 				= new ConcurrentHashMap<String, RemoteStub>();
 	
@@ -57,7 +58,7 @@ public class Client {
 
 		try
 		{
-			log("Creating new remote object from server (new bindName: Calci9) using already received remote object!..");
+			log("Receiving refrence to remote object from server using already received remote object!");
 			CalciInterface newInterfaceInvalid = calci.getNewCalci("Calci9");
 		}
 		catch (Remote440Exception e)

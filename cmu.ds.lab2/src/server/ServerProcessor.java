@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import core.Remote440;
+import core.RemoteObjectReference;
 
 public class ServerProcessor extends Thread {
 	RemoteObjectManager remoteObjectManager;
@@ -35,28 +36,45 @@ public class ServerProcessor extends Thread {
 			
 			Class<?> classRef = null;
 			
+			
 			String className = newMsg.remoteObjectRef.getInterfaceImplemented() + "Interface";
 			
 			// instantiate stub class by name 
 			classRef = Class.forName(className);
 			
 			// TODO get class by HTTP
-				
+			
+			// iterate over params. If param has been converted, then re-convert to local instance
+			int count =0;
+			for(Boolean b: newMsg.converted){
+				if(b == true){
+					newMsg.objectArray[count] = remoteObjectManager.getActualObject(((RemoteObjectReference)newMsg.objectArray[count]).getBindName());
+				}
+				count++;
+			}
+			
 			Method myMethod = classRef.getMethod(newMsg.methodName, newMsg.classArray);
+			
 						
 			if(!remoteObjectManager.containsEntry(newMsg.remoteObjectRef.getBindName())){
-				ExceptionMessage em = new ExceptionMessage("Bindname not found at server");
-				Communicator.sendMessage(clientSocket, em);
+				throw new IllegalAccessException("Remote Object does not exist.");
 			}else{
 				String bn = newMsg.remoteObjectRef.getBindName();
-				Object ok = myMethod.invoke(remoteObjectManager.getActualObject(bn), newMsg.objectArray);
+				Object returnObj = myMethod.invoke(remoteObjectManager.getActualObject(bn), newMsg.objectArray);
 				// if return object is remote reference for client (i.e. local to server),
 				// then replace it with its remote reference
-				if( ok instanceof Remote440)
-					ok = remoteObjectManager.getRor((Remote440) ok);	
-					// package the result
-					ReturnMessage r = new ReturnMessage(ok);
-					Communicator.sendMessage(clientSocket, r);
+				ReturnMessage r;
+				if( returnObj instanceof Remote440){
+					// This has to be converted to a stub at the client
+					returnObj = remoteObjectManager.getRor((Remote440) returnObj);
+					r = new ReturnMessage(returnObj,true); 
+				}
+				else{
+					// Not a remote object. Don't convert at client into stub
+					r= new ReturnMessage(returnObj,false); 
+				}
+				// package the result
+				Communicator.sendMessage(clientSocket, r);
 			}
 						
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException 
@@ -76,7 +94,7 @@ public class ServerProcessor extends Thread {
 			} catch (IOException | InterruptedException e1) {
 				e1.printStackTrace();
 			}
-			e.printStackTrace();
+			//e.printStackTrace(); -> results in invocation exception
 		}finally{
 			try {
 				clientSocket.close();
