@@ -10,7 +10,7 @@ import communication.MessageType;
 import core.Remote440Exception;
 
 
-
+// @referred http://docs.oracle.com/javase/7/docs/api/java/rmi/Naming.html
 public class Naming {
 	
 	private static String[] getRegistryAndBindname(String address) throws Remote440Exception {

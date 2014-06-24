@@ -8,6 +8,7 @@ import communication.InvocationMessage;
 import communication.Message;
 import communication.ReturnMessage;
 
+// @referred http://docs.oracle.com/javase/8/docs/platform/rmi/spec/rmi-arch2.html
 public class RemoteStub {
 	RemoteObjectReference ror;
 	
@@ -19,7 +20,7 @@ public class RemoteStub {
 		this.ror = ror;
 	}
 	
-
+	// @referred http://docs.oracle.com/javase/7/docs/api/java/rmi/server/RemoteObjectInvocationHandler.html
 	public Object invoke(String methodName, Object[] objects, Class<?>[] classes) throws Remote440Exception {
 		try {
 			

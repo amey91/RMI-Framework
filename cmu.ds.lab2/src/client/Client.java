@@ -11,6 +11,7 @@ import core.Remote440Exception;
 import core.RemoteStub;
 import example1.CalciInterface;
 
+// @referred http://docs.oracle.com/javase/8/docs/platform/rmi/spec/rmi-client2a.html
 public class Client {
 	//this is to ensure that each remote object one and only one stub
 	//it will map bindname to client stub objects
