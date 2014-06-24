@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 import core.Naming;
+import core.Remote440;
 import core.Remote440Exception;
 import core.RemoteStub;
 import example1.CalciInterface;
@@ -13,8 +14,8 @@ import example1.CalciInterface;
 public class Client {
 	//this is to ensure that each remote object one and only one stub
 	//it will map bindname to client stub objects
-	private static ConcurrentHashMap<String, RemoteStub> clientMap 
-				= new ConcurrentHashMap<String, RemoteStub>();
+	private static ConcurrentHashMap<String, Remote440> clientMap 
+				= new ConcurrentHashMap<String, Remote440>();
 	
 	private static String registryIp;
 	private static int registryPort;
@@ -67,29 +68,53 @@ public class Client {
 		
 		//take user input and take necessary action
 		 String userInput;
+		 String choice;
+		 CalciInterface lookupResult;
          while (true) {
          	try{
-         		log("Enter \n 1. Display received remote objects  "
-         				+ "\n 2. Lookup for remote objects "
-         				+ "\n 3. Delete received remote objects");
-         		userInput = br.readLine();
-         		if(userInput=="" || userInput==null){
+         		log("Enter \n 1. List all bindnames registered with registry server "
+         				+ "\n 2. Lookup remote object by bindname "
+         				+ "\n 3. Display received remote objects " 
+         				+ "\n 4. Delete received remote objects");
+         		choice = br.readLine();
+         		if(choice=="" || choice==null){
          			throw new Exception("Blank input not allowed.");
          		}
          		
-         		switch(userInput){
-         		case "1": //display
-         			for(String s: clientMap.keySet()){
-         				log(""+clientMap.get(s).getRor());
-         			}
-         			
+         		switch(choice){
+         		
+         		case "1": // list bindname in registry server
+         			services = Naming.List(registryIp+ ":"+registryPort);
+         			log("Registry Server has following objects: "+ Arrays.toString(services));
          			break;
+         		
          		case "2": //lookup
+         			log("Enter bindname to be looked up: ");
+         			userInput = br.readLine();
+         			lookupResult  = (CalciInterface)Naming.lookup(registryIp+":"+registryPort+"/"+userInput);
+         			// TODO check lookupResult for null and if !=null store it in client map
+         			
+         			addIntoMap(userInput,lookupResult);
          			break;
-         		case "3": //delete using bindname
+         		
+         		case "3": //display
+         			int iterCount = 0;
+         			for(String s: clientMap.keySet()){
+         				log("Remote Object No. " + iterCount++  +": " + s);
+         			}
+         		
+         		case "4"://delete using bindname
+         			log("Enter bindname to be deleted: ");
+         			userInput = br.readLine();
+         			int r = deleteFromMap(userInput);
+         			if(r==0)
+         				log(userInput + " deleted");
+         			else
+         				log("Error while deleting. Operation not complete. ");
          			break;
+         		
          		default: 
-         			log("Wrong entry found.");
+         			log("Wrong input received. No action taken.");
          			break;
          		}
          		
@@ -107,13 +132,17 @@ public class Client {
 		System.out.println(a);
 	}
 	
-	private void addIntoMap(String bindname , RemoteStub newStub){
-		Client.clientMap.put(bindname, newStub);
+	private static void addIntoMap(String bindname,Remote440 newStub){
+		Client.clientMap.put(bindname,newStub);
 	}
 	
-	private void deleteFromMap(String bindname){
+	// @return 0 if deleted
+	// @return -1 if error
+	private static int deleteFromMap(String bindname){
 		if(Client.clientMap.containsKey(bindname)){
 			Client.clientMap.remove(bindname);
+			return 0;
 		}
+		else return -1;
 	}
 }
