@@ -14,38 +14,35 @@ public class Message implements java.io.Serializable{
 	public MessageType type; 
 	
 	// general purpose string. Function depends on implementation
-	public String comments;
+	public String content;
 	
 	
-	public Message(RemoteObjectReference r, MessageType t, String bindName){
+	public Message(RemoteObjectReference r, MessageType t, String bindName) {
 		remoteObjectRef = r;
 		type = t;
-		comments = bindName;
+		content = bindName;
 	}
 	
-	public Message(RemoteObjectReference r){
+	public Message(RemoteObjectReference r) {
 		remoteObjectRef = r;
 		type = MessageType.NONE ;
-		comments = "";
+		content = "";
 	}
 	
-	public Message(RemoteObjectReference r, MessageType t){
+	public Message(RemoteObjectReference r, MessageType t) {
 		remoteObjectRef = r;
 		type = t;
-		comments = "";
+		content = "";
 	}
 
-	public Message(){
+	public Message() {
 		remoteObjectRef = null;
-		comments = "";
+		type = MessageType.NONE;
+		content = "";
 	}
 	
-	public Message(String exceptionMsg){
-		comments = exceptionMsg;
-	}
-	
-	public String toString(){
-		return "MESSAGE-Type: "+ this.type.toString() +" MESSAGE-Payload: "+ this.comments + "| MESSAGE-RoR: "+ this.remoteObjectRef+ " ";
+	public String toString() {
+		return "MESSAGE-Type: "+ this.type.toString() +" MESSAGE-Payload: "+ this.content + "| MESSAGE-RoR: "+ this.remoteObjectRef+ " ";
 	}
 }
 

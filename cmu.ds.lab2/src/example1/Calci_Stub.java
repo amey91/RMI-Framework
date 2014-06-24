@@ -1,5 +1,6 @@
 package example1;
 
+
 import core.*;
 
 public class Calci_Stub extends RemoteStub implements CalciInterface,Remote440 {

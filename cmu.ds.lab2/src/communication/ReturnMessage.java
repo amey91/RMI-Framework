@@ -10,5 +10,4 @@ public class ReturnMessage extends Message{
 		result = r;
 	}
 
-	
 }

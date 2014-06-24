@@ -5,8 +5,8 @@ import java.io.IOException;
 import communication.MessageType;
 import server.Server;
 import core.Remote440;
+import server.RemoteObjectManager;
 import core.Remote440Exception;
-import core.RemoteObjectReference;
 
 public class Calci implements CalciInterface {
 
@@ -15,6 +15,12 @@ public class Calci implements CalciInterface {
 	// this variable will be called by the client but will be stored only on the server
 	// i.e. this is a stateful server variable
 	private int memoryVar = 0;
+	
+	RemoteObjectManager rom;
+	public Calci(RemoteObjectManager r)
+	{
+		rom = r;
+	}
 	
 	// add two stateless integers
 	@Override
@@ -38,15 +44,10 @@ public class Calci implements CalciInterface {
 	@Override
 	public CalciInterface getNewCalci(String bindName) throws Remote440Exception {
 		// TODO CHANGE the way IPs are assigned
-		RemoteObjectReference  ror = new RemoteObjectReference(server.Server.serverIp, Server.INITIAL_SERVER_PORT, bindName, "example1.Calci");
-		Remote440 a = new example1.Calci();
-		try {
-			int i = Server.storeAndSend(ror,a, MessageType.REBIND);
-		} catch (ClassNotFoundException | IOException | InterruptedException e) {
-			// abstract away the server exception
-			throw new Remote440Exception("Could not create remote object from within remote object :(");
-		}
-		return (CalciInterface) a;
+		//RemoteObjectReference  ror = new RemoteObjectReference(server.Server.serverIp, Server.INITIAL_SERVER_PORT, bindName, "example1.Calci");
+		//int i = Server.storeAndSend(ror,a, MessageType.REBIND);
+		return (CalciInterface)rom.getActualObject(bindName);
+		
 	}
 
 	@Override

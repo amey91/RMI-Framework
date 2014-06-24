@@ -1,32 +1,26 @@
 package server;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Scanner;
 
 import communication.Communicator;
-import communication.Message;
-import communication.MessageType;
 import core.Remote440;
-import core.RemoteObjectReference;
-
 
 public class Server {
-	// hashmap for storing String:ActualServerObject
-	// it maps bindname to the actual object reference
-	static ConcurrentHashMap<String, Remote440> serverMap = new ConcurrentHashMap<String, Remote440>();
-	static ConcurrentHashMap<Remote440, RemoteObjectReference> serverRorMap = new ConcurrentHashMap<Remote440, RemoteObjectReference>();
 	
 	//overridden by cmd arguments 
-	public static int INITIAL_SERVER_PORT = 5555;
-	// need access to server ip from example packages
-	public static String serverIp;
-	static String registryIp;
-	static int registryPort;
+	public static final int DEFAULT_SERVER_PORT = 5555;
 	
 	public static void main(String args[]) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
+
+		String serverIp;
+		String registryIp;
+		int registryPort;
+		
 		if(args.length != 2){
 			
 			//deployed using eclipse
@@ -34,12 +28,11 @@ public class Server {
 			registryIp = "127.0.0.1";
 			registryPort = 1099;
 			
-			ServerSocket ssss = new ServerSocket(6666);
+			ServerSocket ss = new ServerSocket(6666);
 			// TODO CHANGE THIS IP!
-			serverIp = ssss.getInetAddress().getHostAddress();
+			serverIp = ss.getInetAddress().getHostAddress();
 			// InetAddress.getLocalHost()
-			ssss.close();
-			
+			ss.close();
 		}else{
 			//deployed on unix.andrew
 			registryIp = args[0];
@@ -56,69 +49,14 @@ public class Server {
 			}
 		}
 		
-		RemoteObjectReference  r1 = new RemoteObjectReference(serverIp, INITIAL_SERVER_PORT, "Calci1" , "example1.Calci");
-		RemoteObjectReference  r2 = new RemoteObjectReference(serverIp, INITIAL_SERVER_PORT, "Calci2" , "example1.Calci");
-		RemoteObjectReference  r3 = new RemoteObjectReference(serverIp, INITIAL_SERVER_PORT, "Calci3" , "example1.Calci");
-		RemoteObjectReference  r4 = new RemoteObjectReference(serverIp, INITIAL_SERVER_PORT, "Calci4" , "example1.Calci");
-		Remote440 a = new example1.Calci();
-		Remote440 a2 = new example1.Calci();
-		Remote440 a3 = new example1.Calci();
-		Remote440 a4 = new example1.Calci();
-		// TODO @test to test rebind
-		int i = storeAndSend(r1,a, MessageType.BIND);
-		int i2 = storeAndSend(r2,a2, MessageType.REBIND);
-		int i3 = storeAndSend(r3,a3,MessageType.REBIND);
-		int i4 = storeAndSend(r4,a4,MessageType.REBIND);
-		
-		// remove Calci1 object from this server as well as registry server.
-		int i5 = deleteAndRemove("Calci1");
-		Communicator.listenForMessages(Server.INITIAL_SERVER_PORT, ServerProcessor.class);
+		RemoteObjectManager remoteObjectManager = new RemoteObjectManager(registryIp, registryPort, serverIp, DEFAULT_SERVER_PORT);
+		//start a console for adding/removing entries on user requests
+		new Thread(new ServerUpdater(remoteObjectManager)).start();
+				
+		Communicator.listenForMessages(Server.DEFAULT_SERVER_PORT, remoteObjectManager, ServerProcessor.class);
 		
 	}//end of main
 	
-	// @return 0 if successful 
-	// @return return -1 if any error
-	// TODO I changed this method to public so that I can call it from Calci to create a new remote object 
-	//   from within Calci class itself
-	public static int storeAndSend(RemoteObjectReference r, Remote440 newObj, MessageType mt) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
-		// contact registry and register
-		Message newmsg = new Message(r, mt, r.bindname);
-		
-		Message recvdObj = Communicator.sendAndReceiveMessage(Server.registryIp,Server.registryPort, newmsg);
-	
-		if(recvdObj.type != mt ){
-			System.out.println("fail:"+mt.toString());
-			if(recvdObj == null)
-				System.out.println("Recevied obj is null");
-			return -1;
-		}
-		serverMap.put(r.bindname, newObj);
-		serverRorMap.put(newObj, r);
-		
-		return 0;
-		
-	}
-	
-	// @return 0 if successful. -1 if not
-	public static int deleteAndRemove(String bindName) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
-		// contact registry and register
-		Message newmsg = new Message(null, MessageType.REMOVE, bindName);
-		Message inMsg = Communicator.sendAndReceiveMessage(Server.registryIp,Server.registryPort, newmsg);
-		
-		if(!Server.serverMap.containsKey(bindName)){
-    		//object does not exists Thus remove failed
-    		return -1;
-    	}else
-    		//check is received message is okay
-    		if(inMsg.type != MessageType.REMOVE)
-    			return -1;
-    		else
-    		{
-    			Server.serverRorMap.remove(Server.serverMap.get(bindName));
-    			Server.serverMap.remove(bindName);
-    		}
-		return 0;
-	}
 	
 	
 	public static void log(String a){
@@ -126,3 +64,74 @@ public class Server {
 	}
 }
 
+class ServerUpdater extends Thread{
+	
+	RemoteObjectManager remoteObjectManager;
+	ServerUpdater(RemoteObjectManager remoteObjectManager)
+	{
+		this.remoteObjectManager = remoteObjectManager;
+	}
+	@Override
+	public void run(){
+		@SuppressWarnings("resource")
+		Scanner sc = new Scanner(System.in);
+		String userInput ="";
+		
+		while(true){
+			try{
+         		log("\n 1. Add new remote objects " 
+         				+ "\n 2. Delete remote objects " 
+         				+ "\n 3. Add/remove test ");
+         		userInput = sc.nextLine();
+         		if(userInput=="" || userInput==null){
+         			throw new Exception("Blank input not allowed.");
+         		}
+         		int option = Integer.parseInt(userInput);
+         		if(option == 1) //Add
+         		{
+             		//TODO make some list to display
+             		log("Enter Service Name(example1.Calci): ");
+
+             		String interfaceImpl = sc.nextLine();
+             		Class<?> stubClass = Class.forName(interfaceImpl);
+             		//TODO get arguments somehow - from user or map on server 
+             		Constructor<?> constructorNew = stubClass.getConstructor();
+             		Remote440 remote = (Remote440)constructorNew.newInstance();
+             		
+             		log("Enter new Bind Name: ");
+             		String bindName = sc.nextLine();
+             		remoteObjectManager.InsertEntry(interfaceImpl, bindName, remote, true);
+         		}
+         		else if(option == 2) //Delete
+         		{
+         			log("Enter Bind Nameof object to be deleted: ");
+             		String bindName = sc.nextLine();
+             		remoteObjectManager.RemoveEntry(bindName);
+         		}
+         		else if(option == 3)
+         		{
+         			Remote440 a1 = new example1.Calci(remoteObjectManager);
+         			Remote440 a2 = new example1.Calci(remoteObjectManager);
+         			Remote440 a3 = new example1.Calci(remoteObjectManager);
+         			Remote440 a4 = new example1.Calci(remoteObjectManager);
+         			
+         			remoteObjectManager.InsertEntry("example1.Calci", "Calci1", a1, true);
+         			remoteObjectManager.InsertEntry("example1.Calci", "Calci2", a2, true);
+         			remoteObjectManager.InsertEntry("example1.Calci", "Calci3", a3, true);
+         			remoteObjectManager.InsertEntry("example1.Calci", "Calci4", a4, true);
+         			
+         			remoteObjectManager.RemoveEntry("Calci1");
+         		}
+         		else
+         			log("Wrong Entry!" + userInput);
+         		
+         	}catch(Exception e){
+         		log(e.getMessage());
+         	}
+		}	
+	}
+
+	private static void log(String a){
+		System.out.println(a);
+	}
+}

@@ -14,8 +14,8 @@ import example1.CalciInterface;
 public class Client {
 	//this is to ensure that each remote object one and only one stub
 	//it will map bindname to client stub objects
-	private static ConcurrentHashMap<String, Remote440> clientMap 
-				= new ConcurrentHashMap<String, Remote440>();
+	private static ConcurrentHashMap<String, RemoteStub> clientMap 
+				= new ConcurrentHashMap<String, RemoteStub>();
 	
 	private static String registryIp;
 	private static int registryPort;
@@ -54,16 +54,19 @@ public class Client {
 		
 		//System.out.println(calci.addMemory(6));
 		
+
 		log("Creating new remote object from server (new bindName: Calci9) using already received remote object!..");
 		CalciInterface newInterface = calci.getNewCalci("Calci9");
+
+		log("Creating new remote object from server (new bindName: Calci4) using already received remote object!..");
+		CalciInterface newInterface2 = calci.getNewCalci("Calci4");
 
 		log("New remote object received. Using this object to add integers: " + newInterface.add(879,7));
 		
 		newInterface.setMemory(newInterface.addMemory(4));
 		log("Adding 4 to new remote object variable: "+newInterface.addMemory(0));
 		
-		log("Converting 'darth - vader' to uppercase using newly received object: "+ newInterface.getUpperCaseString("darth - vader"));
-		
+		log("Converting 'darth - vader' to uppercase using newly received object: "+ newInterface.getUpperCaseString("darth - vader"));		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
 		//take user input and take necessary action
@@ -86,6 +89,7 @@ public class Client {
          		case "1": // list bindname in registry server
          			services = Naming.List(registryIp+ ":"+registryPort);
          			log("Registry Server has following objects: "+ Arrays.toString(services));
+
          			break;
          		
          		case "2": //lookup
@@ -132,8 +136,8 @@ public class Client {
 		System.out.println(a);
 	}
 	
-	private static void addIntoMap(String bindname,Remote440 newStub){
-		Client.clientMap.put(bindname,newStub);
+	private static void addIntoMap(String bindname, Remote440 newStub){
+		Client.clientMap.put(bindname,(RemoteStub) newStub);
 	}
 	
 	// @return 0 if deleted
@@ -146,3 +150,4 @@ public class Client {
 		else return -1;
 	}
 }
+
