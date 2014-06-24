@@ -45,7 +45,7 @@ public class ServerProcessor extends Thread {
 			Method myMethod = classRef.getMethod(newMsg.methodName, newMsg.classArray);
 						
 			if(!remoteObjectManager.containsEntry(newMsg.remoteObjectRef.getBindName())){
-				ExceptionMessage em = new ExceptionMessage("Bindname not fkodfdound at server");
+				ExceptionMessage em = new ExceptionMessage("Bindname not found at server");
 				Communicator.sendMessage(clientSocket, em);
 			}else{
 				String bn = newMsg.remoteObjectRef.getBindName();
