@@ -60,11 +60,18 @@ public class ServerProcessor extends Thread {
 			}
 						
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException 
-				| IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IOException | InterruptedException  e) {
+				| IllegalAccessException | IllegalArgumentException | IOException | InterruptedException  e) {
 			//send error message
 			try {
 				ExceptionMessage em = new ExceptionMessage(e.getMessage());
+				Communicator.sendMessage(clientSocket, em);
+			} catch (IOException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			try {
+				ExceptionMessage em = new ExceptionMessage(e.getTargetException().getMessage());
 				Communicator.sendMessage(clientSocket, em);
 			} catch (IOException | InterruptedException e1) {
 				e1.printStackTrace();

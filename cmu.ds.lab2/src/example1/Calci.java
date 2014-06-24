@@ -46,8 +46,11 @@ public class Calci implements CalciInterface {
 		// TODO CHANGE the way IPs are assigned
 		//RemoteObjectReference  ror = new RemoteObjectReference(server.Server.serverIp, Server.INITIAL_SERVER_PORT, bindName, "example1.Calci");
 		//int i = Server.storeAndSend(ror,a, MessageType.REBIND);
-		return (CalciInterface)rom.getActualObject(bindName);
-		
+		CalciInterface ci = (CalciInterface)rom.getActualObject(bindName);
+		if(ci==null)
+			throw new Remote440Exception("Not Found");
+		else
+			return ci;
 	}
 
 	@Override
