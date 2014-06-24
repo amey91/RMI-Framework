@@ -55,11 +55,18 @@ public class Client {
 		//System.out.println(calci.addMemory(6));
 		
 
-		log("Creating new remote object from server (new bindName: Calci9) using already received remote object!..");
-		CalciInterface newInterface = calci.getNewCalci("Calci9");
+		try
+		{
+			log("Creating new remote object from server (new bindName: Calci9) using already received remote object!..");
+			CalciInterface newInterfaceInvalid = calci.getNewCalci("Calci9");
+		}
+		catch (Remote440Exception e)
+		{
+			log(e.getMessage());
+		}
 
 		log("Creating new remote object from server (new bindName: Calci4) using already received remote object!..");
-		CalciInterface newInterface2 = calci.getNewCalci("Calci4");
+		CalciInterface newInterface = calci.getNewCalci("Calci4");
 
 		log("New remote object received. Using this object to add integers: " + newInterface.add(879,7));
 		

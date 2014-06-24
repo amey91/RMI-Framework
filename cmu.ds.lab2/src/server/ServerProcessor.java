@@ -45,7 +45,7 @@ public class ServerProcessor extends Thread {
 			Method myMethod = classRef.getMethod(newMsg.methodName, newMsg.classArray);
 						
 			if(!remoteObjectManager.containsEntry(newMsg.remoteObjectRef.getBindName())){
-				ExceptionMessage em = new ExceptionMessage("Bindname not fkodfdound at server");
+				ExceptionMessage em = new ExceptionMessage("Bindname not found at server");
 				Communicator.sendMessage(clientSocket, em);
 			}else{
 				String bn = newMsg.remoteObjectRef.getBindName();
@@ -60,11 +60,18 @@ public class ServerProcessor extends Thread {
 			}
 						
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException 
-				| IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | IOException | InterruptedException  e) {
+				| IllegalAccessException | IllegalArgumentException | IOException | InterruptedException  e) {
 			//send error message
 			try {
 				ExceptionMessage em = new ExceptionMessage(e.getMessage());
+				Communicator.sendMessage(clientSocket, em);
+			} catch (IOException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			try {
+				ExceptionMessage em = new ExceptionMessage(e.getTargetException().getMessage());
 				Communicator.sendMessage(clientSocket, em);
 			} catch (IOException | InterruptedException e1) {
 				e1.printStackTrace();
