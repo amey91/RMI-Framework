@@ -3,9 +3,9 @@ package example1;
 
 import core.*;
 
-public class Calci_Stub extends RemoteStub implements CalciInterface,Remote440 {
+public class CalciInterface_Stub extends RemoteStub implements CalciInterface,Remote440 {
 	
-	public Calci_Stub(RemoteObjectReference ror) {
+	public CalciInterface_Stub(RemoteObjectReference ror) {
 		super(ror);
 	}
 
