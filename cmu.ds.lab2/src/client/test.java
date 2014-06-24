@@ -12,26 +12,7 @@ public class test {
  	static int[] intl = new int[3];
  	
  	public static void main(String args[]) throws IOException{
- 		ServerSocket s = new ServerSocket(6666);
- 		Socket socket = new Socket(InetAddress.getByName("127.0.0.1"),1099);
- 		System.out.println(s.getInetAddress()+ "   <-THIS");
  		
- 		System.out.println(InetAddress.getLocalHost().getHostAddress());
- 		
- 		Socket socket1 = new Socket(InetAddress.getByName(InetAddress.getLocalHost().getHostAddress()),7878);
- 		
- 		socket1.close();
- 		try {
-			A a = new A();
-		} catch (Remote440Exception e) {
-			System.out.println(e.hashCode());
-		}
- 		//superA supera = new superA();
- 		//subA suba = new subA();
- 		//Object n = suba;
- 		//if(n instanceof superA){
- 		//	System.out.println("YES");
- 		//}
  	}
 }
 

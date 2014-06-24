@@ -37,7 +37,7 @@ public class ServerProcessor extends Thread {
 			Class<?> classRef = null;
 			
 			
-			String className = newMsg.remoteObjectRef.getInterfaceImplemented() + "Interface";
+			String className = newMsg.remoteObjectRef.getInterfaceImplemented();
 			
 			// instantiate stub class by name 
 			classRef = Class.forName(className);

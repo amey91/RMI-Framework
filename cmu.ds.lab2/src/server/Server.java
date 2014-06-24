@@ -115,10 +115,10 @@ class ServerUpdater extends Thread{
          			Remote440 a3 = new example1.Calci(remoteObjectManager);
          			Remote440 a4 = new example1.Calci(remoteObjectManager);
          			
-         			remoteObjectManager.InsertEntry("example1.Calci", "Calci1", a1, true);
-         			remoteObjectManager.InsertEntry("example1.Calci", "Calci2", a2, true);
-         			remoteObjectManager.InsertEntry("example1.Calci", "Calci3", a3, true);
-         			remoteObjectManager.InsertEntry("example1.Calci", "Calci4", a4, true);
+         			remoteObjectManager.InsertEntry("example1.CalciInterface", "Calci1", a1, true);
+         			remoteObjectManager.InsertEntry("example1.CalciInterface", "Calci2", a2, true);
+         			remoteObjectManager.InsertEntry("example1.CalciInterface", "Calci3", a3, true);
+         			remoteObjectManager.InsertEntry("example1.CalciInterface", "Calci4", a4, true);
          			
          			remoteObjectManager.RemoveEntry("Calci1");
          		}
