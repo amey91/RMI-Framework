@@ -82,17 +82,26 @@ public class ZipCodeRListClient {
 	// This is also the test that "add" performed all right.
 	System.out.println("\n This is the remote list, printed using find/next.");
 	temp = l;
-	rtemp = rl;
-	while (temp !=null)
-	    {
-		// here is a test.
-		String res = rtemp.find(temp.city);
-		System.out.println("city: "+temp.city+", "+
-				   "code: "+res);
+	
+
+	while(temp!=null)
+	{
+		rtemp = rl;
+		while (rtemp !=null)
+		{
+			// here is a test.
+			String res = rtemp.find(temp.city);
+			if(res!=null)
+				System.out.println("city: "+temp.city+", "+
+					   "code: "+res);
+			else
+				rtemp = rtemp.next();
+		          		
+	    }
 		temp=temp.next;
-		rtemp = rtemp.next();
-	    }        		
     }
+	in.close();
+  }
 }
 
 	    
