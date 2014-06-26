@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import core.Remote440;
+import core.Remote440Exception;
 import core.RemoteObjectReference;
 
 public class ServerProcessor extends Thread {
@@ -66,8 +67,13 @@ public class ServerProcessor extends Thread {
 				ReturnMessage r;
 				if( returnObj instanceof Remote440){
 					// This has to be converted to a stub at the client
-					returnObj = remoteObjectManager.getRor((Remote440) returnObj);
-					r = new ReturnMessage(returnObj,true); 
+					Object rorObj = remoteObjectManager.getRor((Remote440) returnObj);
+					
+					//object not in the registry
+					if(rorObj == null )
+						rorObj = remoteObjectManager.InsertEntry(returnObj.getClass().getInterfaces()[0].toString().substring(10), "dummy", (Remote440)returnObj, true);
+					
+					r = new ReturnMessage(rorObj,true); 
 				}
 				else{
 					// Not a remote object. Don't convert at client into stub
@@ -78,7 +84,7 @@ public class ServerProcessor extends Thread {
 			}
 						
 		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException 
-				| IllegalAccessException | IllegalArgumentException | IOException | InterruptedException  e) {
+				| IllegalAccessException | IllegalArgumentException | IOException | InterruptedException | Remote440Exception e) {
 			//send error message
 			try {
 				ExceptionMessage em = new ExceptionMessage(e.getMessage());

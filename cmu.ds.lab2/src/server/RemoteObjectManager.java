@@ -33,7 +33,7 @@ public class RemoteObjectManager {
 			this.serverPort = serverPort;
 		}
 		
-		public void InsertEntry(String interfaceImpl, String bindName, Remote440 newObj, Boolean rebind) throws Remote440Exception{
+		public RemoteObjectReference InsertEntry(String interfaceImpl, String bindName, Remote440 newObj, Boolean rebind) throws Remote440Exception{
 			
 			MessageType mt = (rebind==true)?MessageType.REBIND:MessageType.BIND;
 			
@@ -48,19 +48,6 @@ public class RemoteObjectManager {
 			} catch (ClassNotFoundException
 					| InterruptedException | IOException e) {
 				throw new Remote440Exception("Couldn't communicate with registry");
-			}
-		
-			if(recvdObj.type != MessageType.LOOKUP){
-				if( recvdObj instanceof ExceptionMessage)
-				{
-					Exception e = ((ExceptionMessage)recvdObj).getException();
-					if(e instanceof Remote440Exception)
-						throw (Remote440Exception)e;
-					else
-						throw new Remote440Exception("Unknown Error");
-				}
-				else
-					throw new Remote440Exception("Unknown Error");
 			}
 			
 			if(recvdObj.type != mt ) {
@@ -77,6 +64,7 @@ public class RemoteObjectManager {
 			
 			serverMap.put(r.getBindName(), newObj);
 			serverRorMap.put(newObj, r);
+			return r;
 		}
 		
 		public void RemoveEntry(String bindName) throws Remote440Exception {
