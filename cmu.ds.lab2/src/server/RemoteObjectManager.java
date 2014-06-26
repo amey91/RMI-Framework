@@ -50,9 +50,27 @@ public class RemoteObjectManager {
 				throw new Remote440Exception("Couldn't communicate with registry");
 			}
 		
+			if(recvdObj.type != MessageType.LOOKUP){
+				if( recvdObj instanceof ExceptionMessage)
+				{
+					Exception e = ((ExceptionMessage)recvdObj).getException();
+					if(e instanceof Remote440Exception)
+						throw (Remote440Exception)e;
+					else
+						throw new Remote440Exception("Unknown Error");
+				}
+				else
+					throw new Remote440Exception("Unknown Error");
+			}
+			
 			if(recvdObj.type != mt ) {
-				if(recvdObj instanceof ExceptionMessage)
-					throw ((ExceptionMessage)recvdObj).getException();
+				if(recvdObj instanceof ExceptionMessage){
+					Exception e = ((ExceptionMessage)recvdObj).getException();
+					if(e instanceof Remote440Exception)
+						throw (Remote440Exception)e;
+					else
+						throw new Remote440Exception("Unknown Error");
+				}
 				else
 					throw new Remote440Exception( "Unknown error" );
 			}
@@ -78,8 +96,13 @@ public class RemoteObjectManager {
 				throw new Remote440Exception("Entry not found in server");
 	    	}else if(inMsg.type != MessageType.REMOVE) {
 	    		//check is received message is okay
-	    		if(inMsg instanceof ExceptionMessage)
-	    			throw ((ExceptionMessage)inMsg).getException();
+	    		if(inMsg instanceof ExceptionMessage){
+	    			Exception e = ((ExceptionMessage)inMsg).getException();
+					if(e instanceof Remote440Exception)
+						throw (Remote440Exception)e;
+					else
+						throw new Remote440Exception("Unknown Error");
+	    		}
 	    		else
 	    			throw new Remote440Exception( "Unknown error" );
 	    	}else{

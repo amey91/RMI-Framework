@@ -43,7 +43,13 @@ public class Naming {
 			recvdObj = Communicator.sendAndReceiveMessage(ipPortBindName[0], Integer.parseInt(ipPortBindName[1]), newmsg);
 			if(recvdObj.type != MessageType.LOOKUP){
 				if( recvdObj instanceof ExceptionMessage)
-					throw ((ExceptionMessage)recvdObj).getException();
+				{
+					Exception e = ((ExceptionMessage)recvdObj).getException();
+					if(e instanceof Remote440Exception)
+						throw (Remote440Exception)e;
+					else
+						throw new Remote440Exception("Unknown Error");
+				}
 				else
 					throw new Remote440Exception("Unknown Error");
 			}

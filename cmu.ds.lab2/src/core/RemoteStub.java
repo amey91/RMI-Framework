@@ -1,6 +1,7 @@
 package core;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import communication.Communicator;
 import communication.ExceptionMessage;
@@ -23,7 +24,7 @@ public class RemoteStub {
 	}
 	
 	// @referred http://docs.oracle.com/javase/7/docs/api/java/rmi/server/RemoteObjectInvocationHandler.html
-	public Object invoke(String methodName, Object[] objects, Class<?>[] classes) throws Remote440Exception {
+	public Object invoke(String methodName, Object[] objects, Class<?>[] classes) throws Remote440Exception, InvocationTargetException {
 		try {
 			
 			// check is param contains Stub. If yes, then convert to Ror. Set the corresponding "converted" boolean to true
@@ -42,7 +43,13 @@ public class RemoteStub {
 			//iterate params and replace all objects that inherit Remote440 with their Ror
 			Message returnResult = Communicator.sendAndReceiveMessage(ror.getServerIp(),ror.getServerPort(), invMsg);
 			if( returnResult instanceof ExceptionMessage)
-				throw ((ExceptionMessage)returnResult).getException();
+			{
+				Exception e = ((ExceptionMessage)returnResult).getException();
+				if(e instanceof InvocationTargetException)
+					throw (InvocationTargetException)e;
+				else
+					throw (Remote440Exception)e;
+			}
 			
 			// handle if return type itself is RoR
 			// case 1. it is meant to be Remote obj. Case 2. it is meant to be RoR

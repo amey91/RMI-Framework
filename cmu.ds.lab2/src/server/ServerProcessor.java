@@ -89,7 +89,7 @@ public class ServerProcessor extends Thread {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			try {
-				ExceptionMessage em = new ExceptionMessage(e.getTargetException().getMessage());
+				ExceptionMessage em = new ExceptionMessage(e);
 				Communicator.sendMessage(clientSocket, em);
 			} catch (IOException | InterruptedException e1) {
 				e1.printStackTrace();

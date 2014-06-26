@@ -41,12 +41,12 @@ public class Calci implements CalciInterface {
 	}
 
 	@Override
-	public CalciInterface getNewCalci(String bindName) throws Remote440Exception {
+	public CalciInterface getNewCalci(String bindName) throws Remote440Exception, NullPointerException {
 		
 		CalciInterface ci = (CalciInterface)rom.getActualObject(bindName);
 		// check if this object doesnt exist in the server 
 		if(ci==null)
-			throw new Remote440Exception("Not Found");
+			throw new NullPointerException("Not Found");
 		else
 			return ci;
 	}

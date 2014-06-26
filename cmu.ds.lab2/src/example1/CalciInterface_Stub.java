@@ -1,71 +1,80 @@
 package example1;
-
-
 import core.*;
+import java.lang.reflect.InvocationTargetException;
 
-public class CalciInterface_Stub extends RemoteStub implements CalciInterface,Remote440 {
-	
-	public CalciInterface_Stub(RemoteObjectReference ror) {
+public class CalciInterface_Stub extends core.RemoteStub implements example1.CalciInterface {
+	public CalciInterface_Stub (RemoteObjectReference ror) {
 		super(ror);
 	}
 
-	private static final long serialVersionUID = -8687192894869080070L;
-
 	@Override
-	public int add(int a, int b) throws Remote440Exception {
-		
+	public int add(int param0, int param1) throws core.Remote440Exception{
 		try{
-			int i = (int)invoke("add", new Object[]{new Integer(a), new Integer(b)}, new Class[]{Integer.TYPE,Integer.TYPE});
-			return i;
-		} catch(Exception e){
-			System.out.println("Remote Exception occured while contacting client.");
-			throw new Remote440Exception(e.getMessage());
-		}
-		
-		
-	}
-
-	@Override
-	public void setMemory(int b) throws Remote440Exception {
-		try{
-			invoke("setMemory", new Object[]{new Integer(b)},new Class[]{Integer.TYPE});
-		}
-		catch (Exception e){
-			throw new Remote440Exception(e.getMessage());
+			int result = (int)invoke("add", new Object[]{new Integer(param0), new Integer(param1)}, new Class[]{Integer.TYPE, Integer.TYPE});
+			return result;
+		} catch(InvocationTargetException e){
+			Throwable targetException = e.getTargetException();
+			if(targetException instanceof core.Remote440Exception)
+				throw (core.Remote440Exception) targetException;
+			else
+				throw new Remote440Exception("Unknown Exception");
 		}
 	}
 
 	@Override
-	public int addMemory(int b) throws Remote440Exception {
+	public void setMemory(int param0) throws core.Remote440Exception{
 		try{
-			int i = (int)invoke("addMemory", new Object[]{new Integer(b)}, new Class[]{Integer.TYPE});
-			return i;
-		}catch(Exception e){
-			throw new Remote440Exception(e.getMessage());
+			invoke("setMemory", new Object[]{new Integer(param0)}, new Class[]{Integer.TYPE});
+		} catch(InvocationTargetException e){
+			Throwable targetException = e.getTargetException();
+			if(targetException instanceof core.Remote440Exception)
+				throw (core.Remote440Exception) targetException;
+			else
+				throw new Remote440Exception("Unknown Exception");
 		}
-		
 	}
 
 	@Override
-	public CalciInterface getNewCalci(String bindName) throws Remote440Exception {
+	public int addMemory(int param0) throws core.Remote440Exception{
 		try{
-			return	(CalciInterface) invoke("getNewCalci", new Object[]{new String(bindName)},new Class[]{String.class});
+			int result = (int)invoke("addMemory", new Object[]{new Integer(param0)}, new Class[]{Integer.TYPE});
+			return result;
+		} catch(InvocationTargetException e){
+			Throwable targetException = e.getTargetException();
+			if(targetException instanceof core.Remote440Exception)
+				throw (core.Remote440Exception) targetException;
+			else
+				throw new Remote440Exception("Unknown Exception");
 		}
-		catch (Exception e){
-			throw new Remote440Exception(e.getMessage());
-		}
-		
 	}
 
 	@Override
-	public String getUpperCaseString(String simpleString) throws Remote440Exception {
-		
+	public example1.CalciInterface getNewCalci(java.lang.String param0) throws core.Remote440Exception, java.lang.NullPointerException{
 		try{
-			return (String)invoke("getUpperCaseString", new Object[]{new String(simpleString)}, new Class[] {String.class});		
-		}
-		catch (Exception e){
-			throw new Remote440Exception("Could not conver tString.");
+			example1.CalciInterface result = (example1.CalciInterface)invoke("getNewCalci", new Object[]{param0}, new Class[]{java.lang.String.class});
+			return result;
+		} catch(InvocationTargetException e){
+			Throwable targetException = e.getTargetException();
+			if(targetException instanceof core.Remote440Exception)
+				throw (core.Remote440Exception) targetException;
+			if(targetException instanceof java.lang.NullPointerException)
+				throw (java.lang.NullPointerException) targetException;
+			else
+				throw new Remote440Exception("Unknown Exception");
 		}
 	}
 
+	@Override
+	public java.lang.String getUpperCaseString(java.lang.String param0) throws core.Remote440Exception{
+		try{
+			java.lang.String result = (java.lang.String)invoke("getUpperCaseString", new Object[]{param0}, new Class[]{java.lang.String.class});
+			return result;
+		} catch(InvocationTargetException e){
+			Throwable targetException = e.getTargetException();
+			if(targetException instanceof core.Remote440Exception)
+				throw (core.Remote440Exception) targetException;
+			else
+				throw new Remote440Exception("Unknown Exception");
+		}
+	}
 }
