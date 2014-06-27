@@ -39,6 +39,8 @@ public class RorTable {
     		//append bindname to the return string
     		bindNameList = bindNameList +  s + " ";
     	}
+		if(bindNameList == "")
+			return "";
 		return bindNameList;
 	}
 	

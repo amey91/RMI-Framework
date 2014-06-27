@@ -1,7 +1,7 @@
 package test1;
 import java.io.*;
 
-// in implementation, you do not have to extend this as in Java RMI. 
+/* in implementation, you do not have to extend this as in Java RMI. 
 // in your design, however, you can do so.
 // it is assumed that this is not directly called but as in:
 //
@@ -9,7 +9,7 @@ import java.io.*;
 //
 // therefore it does not contain main: new object creation, binding etc. is 
 // done via your RMI.
-
+*/
 public class ZipCodeServerImpl implements ZipCodeServer
 {
     ZipCodeList l;

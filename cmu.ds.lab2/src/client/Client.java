@@ -48,13 +48,13 @@ public class Client {
 		//take user input and take necessary action
 		 String userInput;
 		 String choice;
-		 @SuppressWarnings("unused")
-		CalciInterface lookupResult;
+		 CalciInterface lookupResult;
          while (true) {
          	try{
          		log("MENU \n 1. List all bindnames registered with registry server "
          				+ "\n 2. Lookup remote object by bindname "
-         				+ "\n 3. Run standard test cases (Run after sample RMI tests on Server option 3) ");
+         				+ "\n 3. Run standard test cases (Run after sample RMI tests on Server option 3) "
+         				+ "\n 4. display objects received by this client ");
          		choice = br.readLine();
          		if(choice=="" || choice==null){
          			throw new Exception("Blank input not allowed.");
@@ -63,9 +63,12 @@ public class Client {
          		switch(choice){
          		
          		case "1": // list bindname in registry server
-         			services = Naming.List(registryIp+ ":"+registryPort);
-         			log("Registry Server has following objects: "+ Arrays.toString(services));
-
+         			String servicesList = Naming.List(registryIp+ ":"+registryPort);
+         			if(servicesList == "" || servicesList.length() == 0){
+         				log("Registry Server does not have any objects. Try running client-option-3 after runing server-option-3...");
+         				break;
+         			}
+         			log("\nRegistry Server has following object(s): "+ servicesList);
          			break;
          		
          		case "2": //lookup
@@ -73,7 +76,11 @@ public class Client {
          			userInput = br.readLine();
          			lookupResult  = (CalciInterface)Naming.lookup(registryIp+":"+registryPort+"/"+userInput);
          			// you can implement operations on object here
-         			
+         			int result = Client.addToMap(userInput, lookupResult);
+         			if(result==0)
+         				log("Object stored successfully");
+         			else
+         				log("Error while receiveing object");
          			break;
          		
          		case "4": //display
@@ -82,28 +89,33 @@ public class Client {
          				log("No objects to display");
          			else
          			for(String s: clientMap.keySet()){
-         				log("Remote Object No. " + iterCount++  +": " + getObjectName((Remote440)clientMap.get(s)));
+         				log("Remote Object No. " + (iterCount++ +1)  +": " + getObjectName((Remote440)clientMap.get(s)));
          			}
          			break;
          		
          		case "5"://delete using bindname
          			log("Enter bindname to be deleted: ");
          			userInput = br.readLine();
-         			int r = deleteFromMap(userInput);
-         			if(r==0)
+         			result = deleteFromMap(userInput);
+         			if(result==0)
          				log(userInput + " deleted");
          			else
          				log("Error while deleting. Operation not complete. ");
          			break;
          		case "3": //default tests
-         			services = Naming.List(registryIp+ ":"+registryPort);
+         			servicesList = Naming.List(registryIp+ ":"+registryPort);
+         			services = servicesList.split(" ");
          			log("NAMING.LIST: Registry Server has following objects: "+ Arrays.toString(services));
          			if(services.length>0){
-         				log("Length of array: "+ services.length);
          				log("Using the first remote object from this list.");
              			
              			CalciInterface calci = (CalciInterface)Naming.lookup(registryIp+":"+registryPort+"/"+services[0]);
-             			
+             			log("received: "+ ((RemoteStub)calci).getRor().getBindName());
+             			result = Client.addToMap(((RemoteStub)calci).getRor().getBindName(), (Remote440)calci);
+             			if(result==0)
+             				log("Object stored successfully");
+             			else
+             				log("Error while receiveing object");
              			
              			//System.out.println(calci.add(120, 46));
              			
@@ -114,15 +126,22 @@ public class Client {
              			//System.out.println(calci.addMemory(6));
              			
              			try{
-             				log("Receiving bogus reference to remote object (Calci999) from server using already received remote object!");
+             				log("Receiving BOGUS reference to remote object (Calci999) from server using already received remote object!");
              				@SuppressWarnings("unused")
-							CalciInterface newInterfaceInvalid = calci.getNewCalci("Calci999");
+							CalciInterface newInterfaceInvalid = calci.getNewCalci("Calci999");             				
              			} catch (Remote440Exception e){
-             				log(e.getMessage());
+             				log("Error: "+(e.getMessage()));
              			}
 
              			log("Receiving remote object from server (new bindName: Calci4) using already received remote object!..");
              			CalciInterface newInterface = calci.getNewCalci("Calci4");
+             			result = Client.addToMap(((RemoteStub)newInterface).getRor().getBindName(), (Remote440)newInterface);
+             			if(result==0)
+             				log("Object stored successfully");
+             			else
+             				log("Error while storing object "+ ((RemoteStub) newInterface).getRor().getBindName());
+             			
+             			
 
              			log("New remote object received. Using this object to add integers: " + newInterface.add(879,7));
              			
@@ -161,6 +180,17 @@ public class Client {
 			return 0;
 		}
 		else return -1;
+	}
+	
+	// @return 0 if deleted
+	// @return -1 if error
+	private static int addToMap(String newBindname, Remote440 newObj){
+		if(Client.clientMap.containsKey(newBindname)){
+			return -1;
+		}
+		Client.clientMap.put(newBindname, (RemoteStub) newObj);
+		
+		return 0;
 	}
 }
 

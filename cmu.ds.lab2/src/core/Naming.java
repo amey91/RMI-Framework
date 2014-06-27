@@ -63,15 +63,15 @@ public class Naming {
 		}	
 	}
 	
-	public static String[] List(String address) throws Remote440Exception {
+	public static String List(String address) throws Remote440Exception {
 		
 		try {
-
 			String names = null;
 			String[] ipPort = Communicator.addressToIPPort(address);
 			
 			Message newmsg = new Message(null, MessageType.LIST);
 			Message recvdObj;
+			// TODO remove this
 			System.out.println("Naming: sending object to "+ ipPort[0] + ":"+ ipPort[1] + " " + newmsg);	
 			recvdObj = Communicator.sendAndReceiveMessage(ipPort[0], Integer.parseInt(ipPort[1]), newmsg);
 			if(recvdObj.type != MessageType.LIST ){
@@ -79,7 +79,7 @@ public class Naming {
 			}
 			
 			names = recvdObj.content;
-			return names.split(" ");	
+			return names;
 			
 		} catch (ClassNotFoundException | InterruptedException | IOException e) {
 			throw new Remote440Exception(e.getMessage());

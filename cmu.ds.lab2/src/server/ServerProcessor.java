@@ -19,6 +19,7 @@ import core.RemoteObjectReference;
 public class ServerProcessor extends Thread {
 	RemoteObjectManager remoteObjectManager;
 	Socket clientSocket;
+	private static int newObjCounter = 0;
 	public ServerProcessor(Object remoteObjectManager, Socket clientSocket){
 		this.clientSocket = clientSocket;
 		this.remoteObjectManager = (RemoteObjectManager)remoteObjectManager;
@@ -36,8 +37,6 @@ public class ServerProcessor extends Thread {
 			newMsg = (InvocationMessage) recvMessage;
 			
 			Class<?> classRef = null;
-			
-			
 			String className = newMsg.remoteObjectRef.getInterfaceImplemented();
 			
 			// instantiate stub class by name 
@@ -69,10 +68,28 @@ public class ServerProcessor extends Thread {
 				if( returnObj instanceof Remote440){
 					// This has to be converted to a stub at the client
 					Object rorObj = remoteObjectManager.getRor((Remote440) returnObj);
+										
+					//object not in the registry, then insert it into the server map before sending it to registry
+					if(rorObj == null ){
+						String interfaceName = null;
+						// iterate and find subclass of Remote440
+						for( Class<?> c : returnObj.getClass().getInterfaces()){
+							if(Remote440.class.isAssignableFrom(c)){
+								interfaceName = c.getName();
+								break;
+							}
+						}
+						
+						if(interfaceName == null){
+							throw new Remote440Exception("Interface cannot be located.");
+						}
 					
-					//object not in the registry
-					if(rorObj == null )
-						rorObj = remoteObjectManager.InsertEntry(returnObj.getClass().getInterfaces()[0].toString().substring(10), "dummy", (Remote440)returnObj, true);
+						rorObj = remoteObjectManager.InsertEntry(interfaceName, 
+								"__dummy__"+newObjCounter++, 
+								(Remote440)returnObj, 
+								true);
+					
+					}
 					
 					r = new ReturnMessage(rorObj,true); 
 				}

@@ -52,6 +52,7 @@ public class RemoteObjectReference implements Serializable{
 			stubClass = Class.forName(stubName);
 		} catch(ClassNotFoundException e){
 			// TODO get class by HTTP
+			e.printStackTrace();
 			throw new Remote440Exception("Invalid class/class-not-found while creating stub");
 		}
 		

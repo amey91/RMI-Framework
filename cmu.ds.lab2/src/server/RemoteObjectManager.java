@@ -115,4 +115,12 @@ public class RemoteObjectManager {
 			return serverRorMap.get(remoteObject);
 		}
 		
+		public String displayRoRs(){
+			String a="";
+			for(Remote440 r : serverRorMap.keySet()){
+				a = a + serverRorMap.get(r).getBindName() + " ";
+			}
+			return a;
+		}
+		
 }
