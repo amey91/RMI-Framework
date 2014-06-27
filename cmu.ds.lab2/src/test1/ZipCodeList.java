@@ -1,5 +1,8 @@
 package test1;
-public class ZipCodeList implements java.io.Serializable{
+
+import java.io.Serializable;
+
+public class ZipCodeList implements Serializable{
 	
 	/**
 	 * 
@@ -10,8 +13,7 @@ public class ZipCodeList implements java.io.Serializable{
     public String ZipCode;
     public ZipCodeList next;
 
-    public ZipCodeList(String c, String z, ZipCodeList n)
-    {
+    public ZipCodeList(String c, String z, ZipCodeList n){
 	city=c;
 	ZipCode=z;
 	next=n;

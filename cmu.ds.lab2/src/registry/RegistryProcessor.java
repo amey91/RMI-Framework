@@ -12,7 +12,6 @@ public class RegistryProcessor extends Thread{
 	RorTable rorTable;
 	Socket clientSocket;
 	
-	//constructor
 	public RegistryProcessor(Object rorTable, Socket a){
 		this.clientSocket = a;
 		this.rorTable = (RorTable)rorTable; 

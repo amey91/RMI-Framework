@@ -1,8 +1,10 @@
 package communication;
 
+import java.io.Serializable;
+
 import core.RemoteObjectReference;
 
-public class Message implements java.io.Serializable{
+public class Message implements Serializable{
 	//message can be of type = "invocation" | "return" | "exception"
 	//we implement each of the message types by extending this class
 	//auto generated

@@ -30,17 +30,13 @@ public class Server {
 			
 			ServerSocket ss = new ServerSocket(6666);
 			serverIp = ss.getInetAddress().getHostAddress();
-			// InetAddress.getLocalHost()
 			ss.close();
 		}else{
 			//deployed on unix.andrew
 			registryIp = args[0];
 			registryPort = Integer.parseInt(args[1]);
-			
 			try {
 				serverIp = InetAddress.getLocalHost().getHostAddress();
-				
-				
 			} catch (UnknownHostException e1) {
 				log("Error while creating remote object");
 				e1.printStackTrace();

@@ -49,6 +49,7 @@ public class ServerProcessor extends Thread {
 			int count =0;
 			for(Boolean b: newMsg.converted){
 				if(b == true){
+					//If param has been converted, then re-convert to local instance
 					newMsg.objectArray[count] = remoteObjectManager.getActualObject(((RemoteObjectReference)newMsg.objectArray[count]).getBindName());
 				}
 				count++;

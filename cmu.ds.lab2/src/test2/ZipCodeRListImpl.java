@@ -1,24 +1,20 @@
 package test2;
 
-public class ZipCodeRListImpl 
-    implements  ZipCodeRList
-{
+public class ZipCodeRListImpl implements  ZipCodeRList {
     String city;
     String zipcode;
     ZipCodeRList next;
 
     // this constructor creates the terminal of the list.
     // it is assumed this is called at the outset.
-    public ZipCodeRListImpl()	
-    {
+    public ZipCodeRListImpl() {
 	city = null;
 	zipcode = null;
 	next = null;
     }
 
     // this is the standard constructor.
-    public ZipCodeRListImpl(String c, String z, ZipCodeRList n)
-    {
+    public ZipCodeRListImpl(String c, String z, ZipCodeRList n){
 	city = c;
 	zipcode = z;
 	next = n;
@@ -26,8 +22,7 @@ public class ZipCodeRListImpl
 
     // finding the zip code only for that cell.
     // its client can implement recursive search.
-    public String find(String c)
-    {
+    public String find(String c){
 	if (c.equals(city))
 	    return zipcode;
 	else
@@ -35,14 +30,12 @@ public class ZipCodeRListImpl
     }
 
     // this is essentially cons.
-    public ZipCodeRList add(String c, String z)
-    {
+    public ZipCodeRList add(String c, String z){
 	return new ZipCodeRListImpl(c, z, this);
     }
 
     // this is essentially car.
-    public ZipCodeRList next()
-    {
+    public ZipCodeRList next(){
 	return next;
     }
 }

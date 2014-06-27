@@ -58,20 +58,18 @@ public class ZipCodeRListClient {
 	// we print out the local zipcodelist.
 	System.out.println("This is the original list.");
 	ZipCodeList temp = l;
-	while (temp !=null)            
-	    {
+	while (temp !=null){
 		System.out.println
 		    ("city: "+temp.city+", "+
 		     "code: "+temp.ZipCode);       
 		temp = temp.next;                        
-	    }
+	}
 	
 	// test "add".
 	System.out.println("testing add.");
 	temp = l;
 	ZipCodeRList rtemp = rl;
-	while (temp !=null)            
-	    {
+	while (temp !=null){
 		rl=rl.add(temp.city, temp.ZipCode);
 		temp = temp.next;                        
 	    }
@@ -84,11 +82,9 @@ public class ZipCodeRListClient {
 	temp = l;
 	
 
-	while(temp!=null)
-	{
+	while(temp!=null){
 		rtemp = rl;
-		while (rtemp !=null)
-		{
+		while (rtemp !=null){
 			// here is a test.
 			String res = rtemp.find(temp.city);
 			if(res!=null)
@@ -96,7 +92,6 @@ public class ZipCodeRListClient {
 					   "code: "+res);
 			else
 				rtemp = rtemp.next();
-		          		
 	    }
 		temp=temp.next;
     }
