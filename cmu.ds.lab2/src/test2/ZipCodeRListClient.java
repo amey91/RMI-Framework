@@ -90,7 +90,7 @@ public class ZipCodeRListClient {
 			if(res!=null)
 				System.out.println("city: "+temp.city+", "+
 					   "code: "+res);
-			else
+			
 				rtemp = rtemp.next();
 	    }
 		temp=temp.next;
