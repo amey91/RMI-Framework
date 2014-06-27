@@ -31,10 +31,10 @@ public class RemoteStub {
 			// if param is RoR itself, dont change the "converted" boolean flag (let it remain false)
 			boolean[] converted = new boolean[objects.length];
 			int count =0;
-			for(Class<?> sampleClass : classes){
-				if(sampleClass == RemoteStub.class){
+			for(Object param : objects){
+				if(param instanceof RemoteStub){
 					converted[count] = true;
-					objects[count] = ((RemoteStub) objects[count]).getRor();
+					objects[count] = ((RemoteStub) param).getRor();
 				}
 				count ++;
 			}

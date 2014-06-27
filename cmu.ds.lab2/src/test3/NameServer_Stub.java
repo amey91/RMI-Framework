@@ -3,6 +3,11 @@ import core.*;
 import java.lang.reflect.InvocationTargetException;
 
 public class NameServer_Stub extends core.RemoteStub implements test3.NameServer {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6120181642555005224L;
+
 	public NameServer_Stub (RemoteObjectReference ror) {
 		super(ror);
 	}
