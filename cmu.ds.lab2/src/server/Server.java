@@ -171,8 +171,9 @@ class ServerUpdater extends Thread{
          		else
          			log("Wrong Entry: " + userInput);
          		
-         	}catch(Exception e){
+         	}catch(Exception e){ 
          		log(e.getMessage());
+         		log("Unexpected input.");
          	}
 		}	// end of while
 	}
