@@ -79,7 +79,7 @@ public class Communicator {
 			
 
 		} catch (NoSuchMethodException | SecurityException | IOException e1) {
-			e1.printStackTrace();
+			System.out.println("Method call failed or you entered invalid data.");
 			return;
 		}
 		
@@ -93,7 +93,6 @@ public class Communicator {
 				
 			} catch (IOException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				System.out.println("Error while opening port at registry server");				
-				e.printStackTrace();
 			}
 		}//end of true	
 	}	

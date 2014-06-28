@@ -115,7 +115,6 @@ public class NameServerClient {
 		catch(IOException | Remote440Exception e)
 		{
 			System.out.println(e.getMessage());
-			//e.printStackTrace();
 		}
 	}
 }

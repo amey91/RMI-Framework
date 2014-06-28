@@ -101,12 +101,11 @@ public class RegistryProcessor extends Thread{
             
 		} catch (InterruptedException | ClassNotFoundException | IOException e) {
 			System.out.println("Communication failure: " + e.getMessage());
-			e.printStackTrace();
 		} finally{
 			try {
 				clientSocket.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Cannot close socket");
 			}
 		}
 	}	

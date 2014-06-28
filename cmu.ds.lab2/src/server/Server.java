@@ -40,7 +40,6 @@ public class Server {
 				serverIp = InetAddress.getLocalHost().getHostAddress();
 			} catch (UnknownHostException e1) {
 				log("Error while creating remote object");
-				e1.printStackTrace();
 				return;
 			}
 		}
@@ -73,8 +72,7 @@ class ServerUpdater extends Thread{
 		
 		while(true){
 			try{
-				//Remote440 a11 = new example1.Calci(remoteObjectManager);
-				//remoteObjectManager.InsertEntry("example1.Calci", "Calci1", a11, true);
+				
          		log("\n 1. Display all remote objects offered by this server"  
          				+ "\n 2. create/add objects using class and bind name"
          				+ "\n 3. Run sample add/remove RMI tests (to get started) ");
@@ -85,22 +83,6 @@ class ServerUpdater extends Thread{
          		int option = Integer.parseInt(userInput);
          		if(option == 1) //display 
          		{
-             		/*/TODO make some list to display
-             		log("Enter Class Name(example1.Calci): ");
-             		
-             		String className = sc.nextLine();
-             		Class<?> stubClass = Class.forName(className);
-
-             		Constructor<?> constructorNew = stubClass.getConstructor();
-             		Remote440 remote = (Remote440)constructorNew.newInstance();
-             		
-             		log("Enter Interface implemented: ");
-             		String interfaceName = sc.nextLine();
-             		
-             		log("Enter new BindName: ");
-             		String bindName = sc.nextLine();
-             		
-             		remoteObjectManager.InsertEntry(interfaceName, bindName, remote, true);*/
              		
              		String a = remoteObjectManager.displayRoRs();
              		if(a.length() == 0 || a == ""){
@@ -109,13 +91,6 @@ class ServerUpdater extends Thread{
              			log("Bindnames at this server are: " + a);
              		}
              	            		
-         		}
-         		// TODO delete this option
-         		else if(option == 99) //Delete
-         		{
-         			log("Enter Bind Nameof object to be deleted: ");
-             		String bindName = sc.nextLine();
-             		remoteObjectManager.RemoveEntry(bindName);
          		}
          		else if(option == 3) // sample cases
          		{

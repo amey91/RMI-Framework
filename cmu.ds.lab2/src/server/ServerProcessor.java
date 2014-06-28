@@ -108,22 +108,21 @@ public class ServerProcessor extends Thread {
 				ExceptionMessage em = new ExceptionMessage(e.getMessage());
 				Communicator.sendMessage(clientSocket, em);
 			} catch (IOException | InterruptedException e1) {
-				e1.printStackTrace();
+				System.out.println("Remote exception.");
 			}
-			e.printStackTrace();
+			System.out.println("Remote exception.");
 		} catch (InvocationTargetException e) {
 			try {
 				ExceptionMessage em = new ExceptionMessage(e);
 				Communicator.sendMessage(clientSocket, em);
 			} catch (IOException | InterruptedException e1) {
-				e1.printStackTrace();
+				System.out.println("Remote exception.");
 			}
-			//e.printStackTrace(); -> results in invocation exception
 		}finally{
 			try {
 				clientSocket.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Remote exception.");
 			}
 		}
 	}

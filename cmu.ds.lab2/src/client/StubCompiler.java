@@ -217,7 +217,7 @@ public class StubCompiler {
  		try {
 			stream.write(out.getBytes());
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Remote exception.");
 		}
  	}
 }

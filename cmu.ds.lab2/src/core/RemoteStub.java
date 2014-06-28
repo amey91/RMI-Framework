@@ -67,7 +67,7 @@ public class RemoteStub {
 			
 		} catch (ClassNotFoundException
 				| InterruptedException | IOException e) {
-			e.printStackTrace();
+			System.out.println("Internal RoR conversion error");
 			throw new Remote440Exception(e.getMessage());
 		}
 		

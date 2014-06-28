@@ -58,7 +58,7 @@ public class Naming {
 			return ror.toStub();
 			
 		} catch (ClassNotFoundException | InterruptedException | IOException e1) {
-			e1.printStackTrace();
+			System.out.println("Remote exception while communicating.");
 			throw new Remote440Exception(e1.getMessage());
 		}	
 	}
