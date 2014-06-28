@@ -30,7 +30,7 @@ public class NameServerClient {
 			System.out.println("Usage: java test3/ZipCodeRListClient <registry_IP> <registry_port> <object_name> <outputfile>");
 			System.exit(0);
 		}
-		
+
 		try{
 			String host = args[0];
 			int port = Integer.parseInt(args[1]);
@@ -86,7 +86,7 @@ public class NameServerClient {
 				rl=rl.add(temp.city, temp.ror, rtemp);
 				temp = temp.next;
 			}
-			
+
 			System.out.println("add tested.");
 			// rl should contain the initial head of the list.
 
@@ -114,6 +114,7 @@ public class NameServerClient {
 		}
 		catch(IOException | Remote440Exception e)
 		{
+			System.out.println("Error occured. Please try again after seeing 'usage' in the submitted report. More info: ");
 			System.out.println(e.getMessage());
 		}
 	}
