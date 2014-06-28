@@ -125,20 +125,23 @@ class ServerUpdater extends Thread{
          			Remote440 a4 = new example1.Calci(remoteObjectManager);
          			//Remote440 a5 = new test1.Calci(remoteObjectManager);
          			
-         			
+         			log("Creating remote objects Calci1, Calci2, Calci3, Calci4.");
          			remoteObjectManager.InsertEntry("example1.CalciInterface", "Calci1", a1, true);
          			remoteObjectManager.InsertEntry("example1.CalciInterface", "Calci2", a2, true);
          			remoteObjectManager.InsertEntry("example1.CalciInterface", "Calci3", a3, true);
          			remoteObjectManager.InsertEntry("example1.CalciInterface", "Calci4", a4, true);
-         			
-         			
+         			log("Objects created");
+         			log("Removing Calci1");
          			remoteObjectManager.RemoveEntry("Calci1");
+         			log("Calci1 has been removed and is no longer available.");
+         			log("sample tests complete");
          		}
          		else if(option == 2) // add object
          		{
-     				log("Enter Class Name (example1.Calci OR test1.ZipCodeServerImpl OR test2.ZipCodeRListImpl OR test3.NameServerImpl): ");
+     				log("Enter Class Name (test1.ZipCodeServerImpl OR test2.ZipCodeRListImpl OR test3.NameServerImpl): ");
          		
              		String className = sc.nextLine();
+             		className = className.trim();
              		Class<?> stubClass = Class.forName(className);
 
              		Constructor<?> constructorNew = stubClass.getConstructor();
@@ -172,8 +175,7 @@ class ServerUpdater extends Thread{
          			log("Wrong Entry: " + userInput);
          		
          	}catch(Exception e){ 
-         		log(e.getMessage());
-         		log("Unexpected input.");
+         		log("Unexpected input or bindname already in use.");
          	}
 		}	// end of while
 	}

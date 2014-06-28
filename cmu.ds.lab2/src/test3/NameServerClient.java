@@ -25,9 +25,12 @@ public class NameServerClient {
 	// (1) a port.
 	// (2) a service name.
 	// (3) a file name as above. 
-	public static void main(String[] args) 
-
-	{
+	public static void main(String[] args) {
+		if(args.length<4){
+			System.out.println("Usage: java test3/ZipCodeRListClient <registry_IP> <registry_port> <object_name> <outputfile>");
+			System.exit(0);
+		}
+		
 		try{
 			String host = args[0];
 			int port = Integer.parseInt(args[1]);

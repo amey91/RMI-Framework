@@ -72,7 +72,7 @@ public class Naming {
 			Message newmsg = new Message(null, MessageType.LIST);
 			Message recvdObj;
 			// TODO remove this
-			System.out.println("Naming: sending object to "+ ipPort[0] + ":"+ ipPort[1] + " " + newmsg);	
+			// System.out.println("Naming: sending object to "+ ipPort[0] + ":"+ ipPort[1] + " " + newmsg);	
 			recvdObj = Communicator.sendAndReceiveMessage(ipPort[0], Integer.parseInt(ipPort[1]), newmsg);
 			if(recvdObj.type != MessageType.LIST ){
 				throw new Remote440Exception("Unknown Error");

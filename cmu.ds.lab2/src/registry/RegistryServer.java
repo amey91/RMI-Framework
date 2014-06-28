@@ -23,6 +23,7 @@ public class RegistryServer {
 			portNumber = Integer.parseInt(args[0]);
 		}
 		else{
+			//length is zero
 			log("Port for RegistryServer not specified. Starting on default port 1099.");
 		}
 		RorTable rorTable = new RorTable();

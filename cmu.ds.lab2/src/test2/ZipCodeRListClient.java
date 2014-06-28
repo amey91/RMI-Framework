@@ -12,8 +12,8 @@ package test2;
 //   end.
 
 import java.io.*;
-import core.Naming;
 
+import core.Naming;
 import core.Remote440Exception;
 import test1.ZipCodeList;
 
@@ -27,6 +27,12 @@ public class ZipCodeRListClient {
     public static void main(String[] args) 
 	throws IOException, Remote440Exception
     {
+    	if(args.length<4){
+        	System.out.println("Usage: java test2/ZipCodeRListClient <registry_IP> <registry_port> <object_name> <outputfile>");
+        	System.exit(0);
+        }
+    	
+    	
 	String host = args[0];
 	int port = Integer.parseInt(args[1]);
 	String serviceName = args[2];
