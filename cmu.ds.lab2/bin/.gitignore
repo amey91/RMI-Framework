@@ -1,8 +1,9 @@
-/core/
 /client/
+/communication/
+/core/
+/example1/
+/registry/
+/server/
 /test1/
 /test2/
 /test3/
-/registry/
-/server/
-/communication/
